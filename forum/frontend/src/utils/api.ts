@@ -1,14 +1,13 @@
-import axios from 'axios'
+﻿import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 
-const isPublicAccess = window.location.hostname.includes('loca.lt')
-const apiBaseURL = isPublicAccess ? 'https://forum-tuv.loca.lt/api' : '/api'
+const apiBaseURL = import.meta.env.VITE_API_BASE_URL || '/api'
+const uploadsBaseURL = import.meta.env.VITE_UPLOADS_BASE_URL || '/uploads'
 
 export const getFileUrl = (path: string): string => {
-  if (isPublicAccess) {
-    return `https://forum-tuv.loca.lt/uploads/${path}`
-  }
-  return `/uploads/${path}`
+  if (!path) return ''
+  if (/^https?:\/\//i.test(path)) return path
+  return `${uploadsBaseURL}/${path}`
 }
 
 const api = axios.create({
@@ -20,7 +19,7 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
-  // 如果不是 FormData，设置 Content-Type 为 application/json
+
   if (!(config.data instanceof FormData)) {
     config.headers['Content-Type'] = 'application/json'
   }

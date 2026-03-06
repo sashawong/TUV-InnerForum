@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./forum/backend
+      dockerfile: Dockerfile
+    container_name: tuvforum-backend
+    restart: unless-stopped
+    environment:
+      PORT: 3001
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
+    volumes:
+      - ./forum/backend/db.json:/app/db.json
+      - ./forum/backend/uploads:/app/uploads
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+
+  frontend:
+    build:
+      context: ./forum/frontend
+      dockerfile: Dockerfile
+    container_name: tuvforum-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"

@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const cors = require('cors');
 const { Low } = require('lowdb');
 const { JSONFile } = require('lowdb/node');
@@ -51,7 +51,7 @@ const upload = multer({
   }
 });
 
-const JWT_SECRET = 'your-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -248,8 +248,8 @@ app.get('/api/topics/:id', async (req, res) => {
       attachments
     };
     
-    console.log('返回帖子详情，tags:', responseData.tags, 'type:', typeof responseData.tags);
-    console.log('tags 是数组吗:', Array.isArray(responseData.tags));
+    console.log('杩斿洖甯栧瓙璇︽儏锛宼ags:', responseData.tags, 'type:', typeof responseData.tags);
+    console.log('tags 鏄暟缁勫悧:', Array.isArray(responseData.tags));
     
     res.json(responseData);
   } catch (error) {
@@ -285,7 +285,7 @@ app.post('/api/topics', authenticateToken, upload.fields([{ name: 'images', maxC
 
     db.data.topics.push(newTopic);
 
-    // 处理图片上传
+    // 澶勭悊鍥剧墖涓婁紶
     if (req.files && req.files.images) {
       console.log('Processing images:', req.files.images.length);
       req.files.images.forEach(image => {
@@ -298,7 +298,7 @@ app.post('/api/topics', authenticateToken, upload.fields([{ name: 'images', maxC
       });
     }
 
-    // 处理附件上传
+    // 澶勭悊闄勪欢涓婁紶
     if (req.files && req.files.attachments) {
       console.log('Processing attachments:', req.files.attachments.length);
       req.files.attachments.forEach(attachment => {
@@ -426,7 +426,7 @@ app.post('/api/topics/:id/replies', authenticateToken, upload.fields([{ name: 'i
 
     db.data.replies.push(newReply);
 
-    // 处理图片上传
+    // 澶勭悊鍥剧墖涓婁紶
     if (req.files && req.files.images) {
       req.files.images.forEach(image => {
         db.data.topicImages.push({
@@ -439,7 +439,7 @@ app.post('/api/topics/:id/replies', authenticateToken, upload.fields([{ name: 'i
       });
     }
 
-    // 处理附件上传
+    // 澶勭悊闄勪欢涓婁紶
     if (req.files && req.files.attachments) {
       req.files.attachments.forEach(attachment => {
         db.data.attachments.push({
