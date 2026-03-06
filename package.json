@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "marked": "^17.0.3",
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^24.37.5",
+    "zustand": "^5.0.11"
+  }
+}
