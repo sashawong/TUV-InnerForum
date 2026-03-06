@@ -8,9 +8,10 @@ services:
     environment:
       PORT: 3001
       JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
+      DB_FILE: /app/data/db.json
     volumes:
-      - ./forum/backend/db.json:/app/db.json
       - ./forum/backend/uploads:/app/uploads
+      - ./forum/backend/data:/app/data
     ports:
       - "${BACKEND_PORT:-3001}:3001"
 

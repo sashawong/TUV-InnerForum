@@ -15,7 +15,7 @@ docker compose up -d --build
 - Backend API: `http://SERVER_IP:3001/api` (or your `BACKEND_PORT`)
 
 ## 4. Data Persistence
-- `forum/backend/db.json` is mounted into backend container
+- `forum/backend/data/db.json` is mounted into backend container
 - `forum/backend/uploads/` is mounted into backend container
 
 ## 5. Common Commands

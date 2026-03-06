@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-const dbFile = path.join(__dirname, 'db.json');
+const dbFile = process.env.DB_FILE || path.join(__dirname, 'db.json');
 const adapter = new JSONFile(dbFile);
 const db = new Low(adapter, {
   users: [],
