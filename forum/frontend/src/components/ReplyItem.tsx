@@ -1,18 +1,33 @@
-import React from 'react'
-import { Button, Input, Space, Image, List } from 'antd'
-import { LikeOutlined, DislikeOutlined } from '@ant-design/icons'
+﻿import React from 'react'
+import { Button, Input, Space, Image, List, Popconfirm, Typography } from 'antd'
+import { LikeOutlined, DislikeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { getFileUrl } from '../utils/api'
+import { useAuthStore } from '../store/authStore'
 
-interface Reply {
+interface ReplyAttachment {
+  id: number
+  original_name: string
+  filename: string
+}
+
+interface ReplyImage {
+  id: number
+  image_path: string
+}
+
+export interface Reply {
   id: number
   content: string
+  author_id: number
   author_name: string
+  author_points?: number
   created_at: string
+  updated_at?: string
   like_count: number
   dislike_count: number
   parent_id: number | null
-  images?: { id: number; image_path: string }[]
-  attachments?: { id: number; original_name: string; filename: string }[]
+  images?: ReplyImage[]
+  attachments?: ReplyAttachment[]
 }
 
 interface ReplyItemProps {
@@ -26,6 +41,13 @@ interface ReplyItemProps {
   onNestedReply: (parentReplyId: number) => void
   replyLikeTypes: { [key: number]: 'like' | 'dislike' | null }
   depth: number
+  editingReplyId: number | null
+  editingContent: string
+  setEditingContent: (value: string) => void
+  onStartEdit: (reply: Reply) => void
+  onCancelEdit: () => void
+  onSaveEdit: (replyId: number) => void
+  onDeleteReply: (replyId: number) => void
 }
 
 const ReplyItem: React.FC<ReplyItemProps> = ({
@@ -38,26 +60,59 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
   onReplyLike,
   onNestedReply,
   replyLikeTypes,
-  depth
+  depth,
+  editingReplyId,
+  editingContent,
+  setEditingContent,
+  onStartEdit,
+  onCancelEdit,
+  onSaveEdit,
+  onDeleteReply,
 }) => {
+  const { user } = useAuthStore()
   const isReplying = replyingTo === reply.id
+  const isEditing = editingReplyId === reply.id
+  const canManage = user?.id === reply.author_id || user?.role === 'admin'
 
   return (
-    <div style={{ 
-      marginLeft: depth > 0 ? 40 : 0, 
-      marginTop: depth > 0 ? 12 : 0, 
-      padding: depth > 0 ? '12px' : 0, 
-      backgroundColor: depth > 0 ? '#f5f5f5' : 'transparent', 
-      borderRadius: 4 
-    }}>
-      <div style={{ marginBottom: 8 }}>
-        <span style={{ fontWeight: 'bold' }}>{reply.author_name}</span>
-        <span style={{ marginLeft: 16, color: '#999', fontSize: depth > 0 ? 12 : 14 }}>
+    <div
+      style={{
+        marginLeft: depth > 0 ? 32 : 0,
+        marginTop: depth > 0 ? 12 : 0,
+        padding: depth > 0 ? '12px 16px' : 0,
+        backgroundColor: depth > 0 ? '#fafafa' : 'transparent',
+        borderRadius: 8,
+      }}
+    >
+      <div style={{ marginBottom: 8, display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <div>
+          <Typography.Text strong>{reply.author_name}</Typography.Text>
+          <Typography.Text type="secondary" style={{ marginLeft: 12 }}>
+            {reply.author_points ?? 0} 积分
+          </Typography.Text>
+        </div>
+        <Typography.Text type="secondary">
           {new Date(reply.created_at).toLocaleString('zh-CN')}
-        </span>
+          {reply.updated_at && reply.updated_at !== reply.created_at ? ' · 已编辑' : ''}
+        </Typography.Text>
       </div>
-      <div style={{ whiteSpace: 'pre-wrap', marginBottom: 8 }}>{reply.content}</div>
-      
+
+      {isEditing ? (
+        <>
+          <Input.TextArea rows={4} value={editingContent} onChange={(e) => setEditingContent(e.target.value)} />
+          <Space style={{ marginTop: 12 }}>
+            <Button type="primary" size="small" onClick={() => onSaveEdit(reply.id)}>
+              保存
+            </Button>
+            <Button size="small" onClick={onCancelEdit}>
+              取消
+            </Button>
+          </Space>
+        </>
+      ) : (
+        <div style={{ whiteSpace: 'pre-wrap', marginBottom: 8 }}>{reply.content}</div>
+      )}
+
       {reply.images && reply.images.length > 0 && (
         <div style={{ marginBottom: 8 }}>
           <Image.PreviewGroup>
@@ -65,34 +120,34 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
               <Image
                 key={image.id}
                 src={getFileUrl(image.image_path)}
-                width={150}
+                width={140}
                 style={{ marginRight: 8, marginBottom: 8 }}
               />
             ))}
           </Image.PreviewGroup>
         </div>
       )}
-      
+
       {reply.attachments && reply.attachments.length > 0 && (
-        <div style={{ marginBottom: 8 }}>
-          <List
-            dataSource={reply.attachments}
-            renderItem={(attachment) => (
-              <List.Item>
-                <a href={getFileUrl(attachment.filename)} download={attachment.original_name}>
-                  {attachment.original_name}
-                </a>
-              </List.Item>
-            )}
-          />
-        </div>
+        <List
+          size="small"
+          dataSource={reply.attachments}
+          renderItem={(attachment) => (
+            <List.Item>
+              <a href={getFileUrl(attachment.filename)} download={attachment.original_name}>
+                {attachment.original_name}
+              </a>
+            </List.Item>
+          )}
+        />
       )}
-      <Space>
+
+      <Space wrap>
         <Button
           size="small"
           icon={<LikeOutlined />}
           onClick={() => onReplyLike(reply.id, 'like')}
-          className={`like-btn ${replyLikeTypes[reply.id] === 'like' ? 'active' : ''}`}
+          type={replyLikeTypes[reply.id] === 'like' ? 'primary' : 'default'}
         >
           {reply.like_count}
         </Button>
@@ -100,17 +155,27 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           size="small"
           icon={<DislikeOutlined />}
           onClick={() => onReplyLike(reply.id, 'dislike')}
-          className={`dislike-btn ${replyLikeTypes[reply.id] === 'dislike' ? 'active' : ''}`}
+          type={replyLikeTypes[reply.id] === 'dislike' ? 'primary' : 'default'}
         >
           {reply.dislike_count}
         </Button>
-        <Button
-          size="small"
-          onClick={() => setReplyingTo(reply.id)}
-        >
+        <Button size="small" onClick={() => setReplyingTo(reply.id)}>
           回复
         </Button>
+        {canManage && !isEditing && (
+          <Button size="small" icon={<EditOutlined />} onClick={() => onStartEdit(reply)}>
+            编辑
+          </Button>
+        )}
+        {canManage && (
+          <Popconfirm title="确认删除这条回复吗？" onConfirm={() => onDeleteReply(reply.id)}>
+            <Button size="small" danger icon={<DeleteOutlined />}>
+              删除
+            </Button>
+          </Popconfirm>
+        )}
       </Space>
+
       {isReplying && (
         <div style={{ marginTop: 12 }}>
           <Input.TextArea
@@ -130,11 +195,12 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           </Space>
         </div>
       )}
-      {childReplies.map(childReply => (
+
+      {childReplies.map((childReply) => (
         <ReplyItem
           key={childReply.id}
           reply={childReply}
-          childReplies={childReplies.filter(r => r.parent_id === childReply.id)}
+          childReplies={childReplies.filter((item) => item.parent_id === childReply.id)}
           replyingTo={replyingTo}
           nestedReplyContent={nestedReplyContent}
           setNestedReplyContent={setNestedReplyContent}
@@ -143,6 +209,13 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           onNestedReply={onNestedReply}
           replyLikeTypes={replyLikeTypes}
           depth={depth + 1}
+          editingReplyId={editingReplyId}
+          editingContent={editingContent}
+          setEditingContent={setEditingContent}
+          onStartEdit={onStartEdit}
+          onCancelEdit={onCancelEdit}
+          onSaveEdit={onSaveEdit}
+          onDeleteReply={onDeleteReply}
         />
       ))}
     </div>

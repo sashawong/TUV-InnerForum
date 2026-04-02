@@ -1,19 +1,46 @@
-import React, { useState, useEffect } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { Card, Tabs, Form, Input, Button, message, List, Tag, Space } from 'antd'
-import { useNavigate } from 'react-router-dom'
+﻿import React, { useEffect, useState } from 'react'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Button, Card, Form, Input, List, message, Space, Statistic, Tabs, Tag, Typography } from 'antd'
 import api from '../utils/api'
 import { useAuthStore } from '../store/authStore'
-import { useThemeStore, useTranslation } from '../store/themeStore'
-import Settings from './Settings'
 import Header from '../components/Header'
 
+interface ProfileData {
+  id: number
+  username: string
+  email?: string | null
+  role: string
+  points: number
+  topic_count: number
+  reply_count: number
+}
+
 const UserCenter: React.FC = () => {
-  const { user } = useAuthStore()
+  const { user, setUser } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
   const [form] = Form.useForm()
-  const t = useTranslation()
+  const [profile, setProfile] = useState<ProfileData | null>(null)
+
+  useEffect(() => {
+    if (user) {
+      fetchProfile()
+    }
+  }, [user?.id])
+
+  const fetchProfile = async () => {
+    try {
+      const response = await api.get('/user/profile')
+      setProfile(response.data)
+      setUser(response.data)
+      form.setFieldsValue({
+        username: response.data.username,
+        email: response.data.email,
+      })
+    } catch (error) {
+      message.error('加载个人资料失败')
+    }
+  }
 
   if (!user) {
     return <Navigate to="/login" />
@@ -46,7 +73,19 @@ const UserCenter: React.FC = () => {
   return (
     <div>
       <Header />
-      <h1 style={{ marginBottom: 24 }}>{t('userCenter')}</h1>
+      <Typography.Title level={2} style={{ marginBottom: 24 }}>
+        个人中心
+      </Typography.Title>
+
+      <Card style={{ marginBottom: 24 }}>
+        <Space size="large" wrap>
+          <Statistic title="当前积分" value={profile?.points ?? user.points ?? 0} />
+          <Statistic title="发帖数" value={profile?.topic_count ?? 0} />
+          <Statistic title="回复数" value={profile?.reply_count ?? 0} />
+          <Button onClick={() => navigate('/leaderboard')}>查看积分排行榜</Button>
+        </Space>
+      </Card>
+
       <Card>
         <Tabs
           activeKey={getActiveKey()}
@@ -54,22 +93,22 @@ const UserCenter: React.FC = () => {
           items={[
             {
               key: 'account',
-              label: t('accountSettings'),
-              children: <AccountSettings form={form} user={user} />,
+              label: '账号设置',
+              children: <AccountSettings form={form} profile={profile} onUpdated={fetchProfile} />,
             },
             {
               key: 'favorites',
-              label: t('favorites'),
+              label: '我的收藏',
               children: <Favorites navigate={navigate} />,
             },
             {
               key: 'history',
-              label: t('history'),
+              label: '我的帖子',
               children: <History navigate={navigate} />,
             },
             {
               key: 'messages',
-              label: t('messages'),
+              label: '我的回复',
               children: <Messages navigate={navigate} />,
             },
           ]}
@@ -79,207 +118,133 @@ const UserCenter: React.FC = () => {
   )
 }
 
-const AccountSettings: React.FC<{ form: any; user: any }> = ({ form, user }) => {
+const AccountSettings: React.FC<{ form: any; profile: ProfileData | null; onUpdated: () => void }> = ({ form, profile, onUpdated }) => {
   const [loading, setLoading] = useState(false)
-  const t = useTranslation()
+  const { setUser } = useAuthStore()
 
-  const handleUpdate = async (values: any) => {
+  const handleUpdate = async (values: { username: string; password?: string; email?: string }) => {
     setLoading(true)
     try {
-      await api.put(`/admin/users/${user.id}`, values)
-      message.success(t('saveSettings'))
-    } catch (error) {
-      message.error(t('operationFailed'))
+      const payload = {
+        username: values.username,
+        password: values.password || undefined,
+        email: values.email || null,
+      }
+      const response = await api.put('/user/profile', payload)
+      setUser(response.data.user)
+      message.success('个人资料已更新')
+      onUpdated()
+      form.setFieldsValue({ password: '' })
+    } catch (error: any) {
+      message.error(error.response?.data?.error || '更新失败')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      initialValues={{ username: user.username }}
-      onFinish={handleUpdate}
-    >
-      <Form.Item
-        label={t('username')}
-        name="username"
-        rules={[{ required: true, message: t('username') }]}
-      >
+    <Form form={form} layout="vertical" onFinish={handleUpdate} initialValues={{ username: profile?.username, email: profile?.email }}>
+      <Form.Item label="用户名" name="username" rules={[{ required: true, message: '请输入用户名' }]}>
         <Input />
       </Form.Item>
-      <Form.Item label={t('newPassword')} name="password">
-        <Input.Password />
+      <Form.Item label="邮箱" name="email">
+        <Input />
+      </Form.Item>
+      <Form.Item label="新密码" name="password">
+        <Input.Password placeholder="不修改可留空" />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" loading={loading}>
-          {t('saveSettings')}
+          保存设置
         </Button>
       </Form.Item>
     </Form>
   )
 }
 
-const Favorites: React.FC<{ navigate: any }> = ({ navigate }) => {
+const Favorites: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
   const [favorites, setFavorites] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
-  const fetchFavorites = async () => {
-    setLoading(true)
-    try {
-      const response = await api.get('/user/favorites')
-      setFavorites(response.data)
-    } catch (error) {
-      message.error('加载收藏失败')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
+    const fetchFavorites = async () => {
+      setLoading(true)
+      try {
+        const response = await api.get('/user/favorites')
+        setFavorites(response.data)
+      } catch (error) {
+        message.error('加载收藏失败')
+      } finally {
+        setLoading(false)
+      }
+    }
+
     fetchFavorites()
   }, [])
 
-  const getTagColor = (tag: string) => {
-    const colors: { [key: string]: string } = {
-      UNECE: 'blue',
-      EU: 'green',
-      MAS: 'orange',
-      TEST: 'purple',
-    }
-    return colors[tag] || 'default'
-  }
-
-  return (
-    <List
-      loading={loading}
-      dataSource={favorites}
-      renderItem={(item) => (
-        <List.Item
-          onClick={() => navigate(`/topic/${item.id}`)}
-          style={{ cursor: 'pointer' }}
-        >
-          <List.Item.Meta
-            title={item.title}
-            description={
-              <div>
-                <div>{item.content.substring(0, 50)}...</div>
-                <div style={{ marginTop: 8 }}>
-                  {item.tags && (Array.isArray(item.tags) ? item.tags : item.tags.split(',')).map((tag: string, index: number) => (
-                    <Tag key={index} color={getTagColor(tag.trim())}>
-                      {tag.trim().toUpperCase()}
-                    </Tag>
-                  ))}
-                </div>
-              </div>
-            }
-          />
-        </List.Item>
-      )}
-    />
-  )
+  return <TopicList data={favorites} loading={loading} navigate={navigate} emptyText="还没有收藏的帖子" />
 }
 
-const History: React.FC<{ navigate: any }> = ({ navigate }) => {
+const History: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
   const [history, setHistory] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
-  const fetchHistory = async () => {
-    setLoading(true)
-    try {
-      const response = await api.get('/user/history')
-      setHistory(response.data)
-    } catch (error) {
-      message.error('加载历史记录失败')
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
+    const fetchHistory = async () => {
+      setLoading(true)
+      try {
+        const response = await api.get('/user/history')
+        setHistory(response.data)
+      } catch (error) {
+        message.error('加载历史失败')
+      } finally {
+        setLoading(false)
+      }
+    }
+
     fetchHistory()
   }, [])
 
-  const getTagColor = (tag: string) => {
-    const colors: { [key: string]: string } = {
-      UNECE: 'blue',
-      EU: 'green',
-      MAS: 'orange',
-      TEST: 'purple',
-    }
-    return colors[tag] || 'default'
-  }
-
-  return (
-    <List
-      loading={loading}
-      dataSource={history}
-      renderItem={(item) => (
-        <List.Item
-          onClick={() => navigate(`/topic/${item.id}`)}
-          style={{ cursor: 'pointer' }}
-        >
-          <List.Item.Meta
-            title={item.title}
-            description={
-              <div>
-                <div>{item.content.substring(0, 50)}...</div>
-                <div style={{ marginTop: 8 }}>
-                  <span>发布时间: {new Date(item.created_at).toLocaleString('zh-CN')}</span>
-                  {item.tags && (Array.isArray(item.tags) ? item.tags : item.tags.split(',')).map((tag: string, index: number) => (
-                    <Tag key={index} color={getTagColor(tag.trim())} style={{ marginLeft: 8 }}>
-                      {tag.trim().toUpperCase()}
-                    </Tag>
-                  ))}
-                </div>
-              </div>
-            }
-          />
-        </List.Item>
-      )}
-    />
-  )
+  return <TopicList data={history} loading={loading} navigate={navigate} emptyText="还没有发布过帖子" />
 }
 
-const Messages: React.FC<{ navigate: any }> = ({ navigate }) => {
+const Messages: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
   const [messages, setMessages] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const t = useTranslation()
-
-  const fetchMessages = async () => {
-    setLoading(true)
-    try {
-      const response = await api.get('/user/messages')
-      setMessages(response.data)
-    } catch (error) {
-      message.error(t('loadFailed'))
-    } finally {
-      setLoading(false)
-    }
-  }
 
   useEffect(() => {
+    const fetchMessages = async () => {
+      setLoading(true)
+      try {
+        const response = await api.get('/user/messages')
+        setMessages(response.data)
+      } catch (error) {
+        message.error('加载回复失败')
+      } finally {
+        setLoading(false)
+      }
+    }
+
     fetchMessages()
   }, [])
 
   return (
     <List
       loading={loading}
+      locale={{ emptyText: '还没有回复记录' }}
       dataSource={messages}
       renderItem={(item) => (
-        <List.Item
-          onClick={() => navigate(`/topic/${item.topic_id}`)}
-          style={{ cursor: 'pointer' }}
-        >
+        <List.Item onClick={() => navigate(`/topic/${item.topic_id}`)} style={{ cursor: 'pointer' }}>
           <List.Item.Meta
             title={item.topic_title}
             description={
               <div>
-                <div>{item.content.substring(0, 50)}...</div>
-                <div style={{ marginTop: 8 }}>
-                  <span>{t('publishTime')}: {new Date(item.created_at).toLocaleString('zh-CN')}</span>
-                </div>
+                <Typography.Paragraph ellipsis={{ rows: 2 }} style={{ marginBottom: 8 }}>
+                  {item.content}
+                </Typography.Paragraph>
+                <Typography.Text type="secondary">
+                  回复时间：{new Date(item.created_at).toLocaleString('zh-CN')}
+                </Typography.Text>
               </div>
             }
           />
@@ -289,4 +254,40 @@ const Messages: React.FC<{ navigate: any }> = ({ navigate }) => {
   )
 }
 
+const TopicList: React.FC<{ data: any[]; loading: boolean; navigate: (path: string) => void; emptyText: string }> = ({
+  data,
+  loading,
+  navigate,
+  emptyText,
+}) => (
+  <List
+    loading={loading}
+    locale={{ emptyText }}
+    dataSource={data}
+    renderItem={(item) => (
+      <List.Item onClick={() => navigate(`/topic/${item.id}`)} style={{ cursor: 'pointer' }}>
+        <List.Item.Meta
+          title={item.title}
+          description={
+            <div>
+              <Typography.Paragraph ellipsis={{ rows: 2 }} style={{ marginBottom: 8 }}>
+                {item.content}
+              </Typography.Paragraph>
+              <Space wrap>
+                <Typography.Text type="secondary">
+                  {new Date(item.created_at).toLocaleString('zh-CN')}
+                </Typography.Text>
+                {item.tags?.map((tag: string) => (
+                  <Tag key={tag}>{tag}</Tag>
+                ))}
+              </Space>
+            </div>
+          }
+        />
+      </List.Item>
+    )}
+  />
+)
+
 export default UserCenter
+

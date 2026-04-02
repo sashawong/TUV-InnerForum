@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { App as AntApp, Layout, Button, Drawer, Breakpoint } from 'antd'
+import { App as AntApp, Layout, Button, Drawer } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import Sidebar from './components/Sidebar'
 import Home from './pages/Home'
@@ -9,6 +9,7 @@ import UserCenter from './pages/UserCenter'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
 import AdminPanel from './pages/AdminPanel'
+import Leaderboard from './pages/Leaderboard'
 import { useAuthStore } from './store/authStore'
 import ThemeProvider from './components/ThemeProvider'
 
@@ -22,10 +23,7 @@ function App() {
   const [sidebarVisible, setSidebarVisible] = useState(false)
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -53,46 +51,42 @@ function App() {
             <Sidebar isMobile={false} />
           ) : (
             <>
-              <Button
-                type="text"
-                icon={<MenuOutlined />}
-                onClick={() => setSidebarVisible(true)}
-                style={{
-                  position: 'fixed',
-                  top: 16,
-                  left: 16,
-                  zIndex: 1000,
-                  background: 'var(--card-bg)',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-                }}
-              />
-              <Drawer
-                title="菜单"
-                placement="left"
-                onClose={() => setSidebarVisible(false)}
-                open={sidebarVisible}
-                width={256}
-              >
-                <Sidebar isMobile={true} />
+              {!isLoginPage && (
+                <Button
+                  type="text"
+                  icon={<MenuOutlined />}
+                  onClick={() => setSidebarVisible(true)}
+                  style={{
+                    position: 'fixed',
+                    top: 16,
+                    left: 16,
+                    zIndex: 1000,
+                    background: 'var(--card-bg)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                  }}
+                />
+              )}
+              <Drawer title="菜单" placement="left" onClose={() => setSidebarVisible(false)} open={sidebarVisible} width={256}>
+                <Sidebar isMobile />
               </Drawer>
             </>
           )}
           <Layout>
-            <Content style={{ 
-              padding: '24px', 
-              background: 'var(--bg-color)',
-              minHeight: '100vh'
-            }}>
+            <Content
+              style={{
+                padding: '24px',
+                background: 'var(--bg-color)',
+                minHeight: '100vh',
+              }}
+            >
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/topic/:id" element={<TopicDetail />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/user/*" element={<UserCenter />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/login" element={<Navigate to="/" replace />} />
-                <Route 
-                  path="/admin/*" 
-                  element={user?.role === 'admin' ? <AdminPanel /> : <Navigate to="/" replace />} 
-                />
+                <Route path="/admin/*" element={user?.role === 'admin' ? <AdminPanel /> : <Navigate to="/" replace />} />
               </Routes>
             </Content>
           </Layout>
@@ -103,3 +97,4 @@ function App() {
 }
 
 export default App
+

@@ -1,154 +1,198 @@
-import React, { useState, useEffect } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { Card, Tabs, Table, Button, Modal, Form, Input, Select, message, Space, Popconfirm } from 'antd'
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+﻿import React, { useEffect, useState } from 'react'
+import { Button, Card, Form, Input, message, Modal, Popconfirm, Select, Space, Switch, Table, Tabs, Tag, Typography } from 'antd'
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import { Navigate } from 'react-router-dom'
 import api from '../utils/api'
 import { useAuthStore } from '../store/authStore'
 import Header from '../components/Header'
 
+interface AdminUser {
+  id: number
+  username: string
+  email?: string | null
+  role: string
+  points: number
+  created_at: string
+}
+
+interface AdminTopic {
+  id: number
+  title: string
+  content: string
+  author_name: string
+  created_at: string
+  is_pinned: number
+  post_type: string
+  tags: string[]
+  like_count: number
+  dislike_count: number
+  reply_count: number
+}
+
 const AdminPanel: React.FC = () => {
   const { user } = useAuthStore()
+  const [users, setUsers] = useState<AdminUser[]>([])
+  const [topics, setTopics] = useState<AdminTopic[]>([])
+  const [loadingUsers, setLoadingUsers] = useState(false)
+  const [loadingTopics, setLoadingTopics] = useState(false)
+  const [userModalOpen, setUserModalOpen] = useState(false)
+  const [editingUser, setEditingUser] = useState<AdminUser | null>(null)
+  const [savingUser, setSavingUser] = useState(false)
+  const [form] = Form.useForm()
 
-  if (!user || user.role !== 'admin') {
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      fetchUsers()
+      fetchTopics()
+    }
+  }, [user?.role])
+
+  if (user?.role !== 'admin') {
     return <Navigate to="/" />
   }
 
-  return (
-    <div>
-      <Header />
-      <h1 style={{ marginBottom: 24 }}>后台管理</h1>
-      <Card>
-        <Tabs
-          defaultActiveKey="users"
-          items={[
-            {
-              key: 'users',
-              label: '用户管理',
-              children: <UserManagement />,
-            },
-            {
-              key: 'topics',
-              label: '帖子管理',
-              children: <TopicManagement />,
-            },
-          ]}
-        />
-      </Card>
-    </div>
-  )
-}
-
-const UserManagement: React.FC = () => {
-  const [users, setUsers] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [editingUser, setEditingUser] = useState<any>(null)
-  const [form] = Form.useForm()
-
   const fetchUsers = async () => {
-    setLoading(true)
+    setLoadingUsers(true)
     try {
       const response = await api.get('/admin/users')
       setUsers(response.data)
     } catch (error) {
       message.error('加载用户列表失败')
     } finally {
-      setLoading(false)
+      setLoadingUsers(false)
     }
   }
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
-
-  const handleCreate = async (values: any) => {
+  const fetchTopics = async () => {
+    setLoadingTopics(true)
     try {
-      await api.post('/admin/users', values)
-      message.success('创建用户成功')
-      setModalVisible(false)
-      form.resetFields()
+      const response = await api.get('/topics')
+      setTopics(response.data)
+    } catch (error) {
+      message.error('加载帖子列表失败')
+    } finally {
+      setLoadingTopics(false)
+    }
+  }
+
+  const openCreateUser = () => {
+    setEditingUser(null)
+    form.resetFields()
+    form.setFieldsValue({ role: 'user' })
+    setUserModalOpen(true)
+  }
+
+  const openEditUser = (record: AdminUser) => {
+    setEditingUser(record)
+    form.setFieldsValue({
+      username: record.username,
+      email: record.email,
+      role: record.role,
+      password: '',
+    })
+    setUserModalOpen(true)
+  }
+
+  const handleSaveUser = async (values: { username: string; email?: string; role: string; password?: string }) => {
+    setSavingUser(true)
+    try {
+      const payload = {
+        username: values.username,
+        email: values.email || null,
+        role: values.role,
+        password: values.password || undefined,
+      }
+
+      if (editingUser) {
+        await api.put(`/admin/users/${editingUser.id}`, payload)
+        message.success('用户已更新')
+      } else {
+        if (!values.password) {
+          message.warning('新建用户时请输入密码')
+          return
+        }
+        await api.post('/admin/users', payload)
+        message.success('用户已创建')
+      }
+
+      setUserModalOpen(false)
       fetchUsers()
     } catch (error: any) {
-      message.error(error.response?.data?.error || '创建用户失败')
+      message.error(error.response?.data?.error || '保存用户失败')
+    } finally {
+      setSavingUser(false)
     }
   }
 
-  const handleUpdate = async (values: any) => {
+  const handleDeleteUser = async (userId: number) => {
     try {
-      await api.put(`/admin/users/${editingUser.id}`, values)
-      message.success('更新用户成功')
-      setModalVisible(false)
-      setEditingUser(null)
-      form.resetFields()
+      await api.delete(`/admin/users/${userId}`)
+      message.success('用户已删除')
       fetchUsers()
-    } catch (error) {
-      message.error('更新用户失败')
+    } catch (error: any) {
+      message.error(error.response?.data?.error || '删除用户失败')
     }
   }
 
-  const handleDelete = async (id: number) => {
+  const handleTogglePin = async (topic: AdminTopic, checked: boolean) => {
     try {
-      await api.delete(`/admin/users/${id}`)
-      message.success('删除用户成功')
-      fetchUsers()
+      await api.put(`/topics/${topic.id}/pin`, { is_pinned: checked })
+      message.success(checked ? '帖子已置顶' : '已取消置顶')
+      fetchTopics()
     } catch (error) {
-      message.error('删除用户失败')
+      message.error('更新置顶状态失败')
     }
   }
 
-  const openModal = (user?: any) => {
-    if (user) {
-      setEditingUser(user)
-      form.setFieldsValue({
-        username: user.username,
-        email: user.email,
-        role: user.role,
-      })
-    } else {
-      setEditingUser(null)
-      form.resetFields()
+  const handleDeleteTopic = async (topicId: number) => {
+    try {
+      await api.delete(`/topics/${topicId}`)
+      message.success('帖子已删除')
+      fetchTopics()
+    } catch (error) {
+      message.error('删除帖子失败')
     }
-    setModalVisible(true)
   }
 
-  const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: '用户名', dataIndex: 'username', key: 'username' },
-    { title: '邮箱', dataIndex: 'email', key: 'email' },
+  const userColumns = [
+    {
+      title: '用户名',
+      dataIndex: 'username',
+      key: 'username',
+    },
+    {
+      title: '邮箱',
+      dataIndex: 'email',
+      key: 'email',
+      render: (value: string | null) => value || '-',
+    },
     {
       title: '角色',
       dataIndex: 'role',
       key: 'role',
-      render: (role: string) => (
-        <span>{role === 'admin' ? '管理员' : '用户'}</span>
-      ),
+      render: (value: string) => <Tag color={value === 'admin' ? 'red' : 'blue'}>{value}</Tag>,
+    },
+    {
+      title: '积分',
+      dataIndex: 'points',
+      key: 'points',
     },
     {
       title: '创建时间',
       dataIndex: 'created_at',
       key: 'created_at',
-      render: (date: string) => new Date(date).toLocaleString('zh-CN'),
+      render: (value: string) => new Date(value).toLocaleString('zh-CN'),
     },
     {
       title: '操作',
-      key: 'action',
-      render: (_: any, record: any) => (
+      key: 'actions',
+      render: (_: unknown, record: AdminUser) => (
         <Space>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => openModal(record)}
-          >
+          <Button size="small" icon={<EditOutlined />} onClick={() => openEditUser(record)}>
             编辑
           </Button>
-          <Popconfirm
-            title="确认删除"
-            description="确定要删除这个用户吗？"
-            onConfirm={() => handleDelete(record.id)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button type="link" danger icon={<DeleteOutlined />}>
+          <Popconfirm title="确认删除这个用户吗？" onConfirm={() => handleDeleteUser(record.id)}>
+            <Button size="small" danger icon={<DeleteOutlined />}>
               删除
             </Button>
           </Popconfirm>
@@ -157,68 +201,127 @@ const UserManagement: React.FC = () => {
     },
   ]
 
+  const topicColumns = [
+    {
+      title: '标题',
+      dataIndex: 'title',
+      key: 'title',
+      render: (value: string, record: AdminTopic) => (
+        <div>
+          <Typography.Text strong>{value}</Typography.Text>
+          <div>
+            <Typography.Text type="secondary">{record.author_name}</Typography.Text>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: '类型/标签',
+      key: 'meta',
+      render: (_: unknown, record: AdminTopic) => (
+        <Space wrap>
+          <Tag color={record.post_type === 'share' ? 'cyan' : 'magenta'}>
+            {record.post_type === 'share' ? '分享' : '求助'}
+          </Tag>
+          {record.tags?.map((tag) => (
+            <Tag key={tag}>{tag}</Tag>
+          ))}
+        </Space>
+      ),
+    },
+    {
+      title: '互动',
+      key: 'stats',
+      render: (_: unknown, record: AdminTopic) => `赞 ${record.like_count} / 踩 ${record.dislike_count} / 回复 ${record.reply_count}`,
+    },
+    {
+      title: '置顶',
+      key: 'pin',
+      render: (_: unknown, record: AdminTopic) => (
+        <Switch checked={record.is_pinned === 1} onChange={(checked) => handleTogglePin(record, checked)} />
+      ),
+    },
+    {
+      title: '操作',
+      key: 'actions',
+      render: (_: unknown, record: AdminTopic) => (
+        <Popconfirm title="确认删除这个帖子吗？" onConfirm={() => handleDeleteTopic(record.id)}>
+          <Button size="small" danger icon={<DeleteOutlined />}>
+            删除
+          </Button>
+        </Popconfirm>
+      ),
+    },
+  ]
+
   return (
     <div>
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={() => openModal()}
-        style={{ marginBottom: 16 }}
-      >
-        新建用户
-      </Button>
-      <Table
-        columns={columns}
-        dataSource={users}
-        rowKey="id"
-        loading={loading}
+      <Header />
+      <Typography.Title level={2} style={{ marginBottom: 24 }}>
+        后台管理
+      </Typography.Title>
+
+      <Tabs
+        items={[
+          {
+            key: 'users',
+            label: '用户管理',
+            children: (
+              <Card
+                extra={
+                  <Button type="primary" icon={<PlusOutlined />} onClick={openCreateUser}>
+                    新建用户
+                  </Button>
+                }
+              >
+                <Table rowKey="id" loading={loadingUsers} columns={userColumns} dataSource={users} pagination={{ pageSize: 8 }} />
+              </Card>
+            ),
+          },
+          {
+            key: 'topics',
+            label: '帖子管理',
+            children: (
+              <Card>
+                <Table rowKey="id" loading={loadingTopics} columns={topicColumns} dataSource={topics} pagination={{ pageSize: 8 }} />
+              </Card>
+            ),
+          },
+        ]}
       />
+
       <Modal
         title={editingUser ? '编辑用户' : '新建用户'}
-        open={modalVisible}
-        onCancel={() => {
-          setModalVisible(false)
-          setEditingUser(null)
-          form.resetFields()
-        }}
+        open={userModalOpen}
+        onCancel={() => setUserModalOpen(false)}
         footer={null}
+        destroyOnClose
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={editingUser ? handleUpdate : handleCreate}
-        >
-          <Form.Item
-            label="用户名"
-            name="username"
-            rules={[{ required: true, message: '请输入用户名' }]}
-          >
+        <Form form={form} layout="vertical" onFinish={handleSaveUser}>
+          <Form.Item label="用户名" name="username" rules={[{ required: true, message: '请输入用户名' }]}>
             <Input />
-          </Form.Item>
-          <Form.Item
-            label="密码"
-            name="password"
-            rules={editingUser ? [] : [{ required: true, message: '请输入密码' }]}
-          >
-            <Input.Password placeholder={editingUser ? '留空则不修改' : '请输入密码'} />
           </Form.Item>
           <Form.Item label="邮箱" name="email">
             <Input />
           </Form.Item>
-          <Form.Item
-            label="角色"
-            name="role"
-            rules={[{ required: true, message: '请选择角色' }]}
-          >
-            <Select>
-              <Select.Option value="user">用户</Select.Option>
-              <Select.Option value="admin">管理员</Select.Option>
-            </Select>
+          <Form.Item label={editingUser ? '重置密码' : '密码'} name="password">
+            <Input.Password placeholder={editingUser ? '不修改可留空' : '请输入密码'} />
           </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              {editingUser ? '更新' : '创建'}
-            </Button>
+          <Form.Item label="角色" name="role" rules={[{ required: true, message: '请选择角色' }]}>
+            <Select
+              options={[
+                { value: 'user', label: 'user' },
+                { value: 'admin', label: 'admin' },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+              <Button onClick={() => setUserModalOpen(false)}>取消</Button>
+              <Button type="primary" htmlType="submit" loading={savingUser}>
+                保存
+              </Button>
+            </Space>
           </Form.Item>
         </Form>
       </Modal>
@@ -226,109 +329,5 @@ const UserManagement: React.FC = () => {
   )
 }
 
-const TopicManagement: React.FC = () => {
-  const [topics, setTopics] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-
-  const fetchTopics = async () => {
-    setLoading(true)
-    try {
-      const response = await api.get('/topics')
-      setTopics(response.data)
-    } catch (error) {
-      message.error('加载帖子列表失败')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchTopics()
-  }, [])
-
-  const handlePin = async (id: number, isPinned: boolean) => {
-    try {
-      await api.put(`/topics/${id}/pin`, { is_pinned: !isPinned })
-      message.success(isPinned ? '已取消置顶' : '已置顶')
-      fetchTopics()
-    } catch (error) {
-      message.error('操作失败')
-    }
-  }
-
-  const handleDelete = async (id: number) => {
-    try {
-      await api.delete(`/topics/${id}`)
-      message.success('删除成功')
-      fetchTopics()
-    } catch (error) {
-      message.error('删除失败')
-    }
-  }
-
-  const columns = [
-    { title: 'ID', dataIndex: 'id', key: 'id' },
-    { title: '标题', dataIndex: 'title', key: 'title' },
-    { title: '作者', dataIndex: 'author_name', key: 'author_name' },
-    {
-      title: '类型',
-      dataIndex: 'post_type',
-      key: 'post_type',
-      render: (type: string) => (type === 'share' ? '分享' : '求助'),
-    },
-    {
-      title: '标签',
-      dataIndex: 'tags',
-      key: 'tags',
-      render: (tags: string) => tags || '-',
-    },
-    {
-      title: '置顶',
-      dataIndex: 'is_pinned',
-      key: 'is_pinned',
-      render: (isPinned: number) => (isPinned ? '是' : '否'),
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: (date: string) => new Date(date).toLocaleString('zh-CN'),
-    },
-    {
-      title: '操作',
-      key: 'action',
-      render: (_: any, record: any) => (
-        <Space>
-          <Button
-            type="link"
-            onClick={() => handlePin(record.id, record.is_pinned)}
-          >
-            {record.is_pinned ? '取消置顶' : '置顶'}
-          </Button>
-          <Popconfirm
-            title="确认删除"
-            description="确定要删除这个帖子吗？"
-            onConfirm={() => handleDelete(record.id)}
-            okText="确定"
-            cancelText="取消"
-          >
-            <Button type="link" danger>
-              删除
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ]
-
-  return (
-    <Table
-      columns={columns}
-      dataSource={topics}
-      rowKey="id"
-      loading={loading}
-    />
-  )
-}
-
 export default AdminPanel
+
