@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../utils/api'
 import { useAuthStore } from '../store/authStore'
 import Header from '../components/Header'
+import { isUploadSizeAllowed, MAX_UPLOAD_SIZE_MB } from '../utils/upload'
 
 interface Topic {
   id: number
@@ -182,8 +183,8 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
       setUploadedImages([])
       setUploadedFiles([])
       fetchTopics()
-    } catch (error) {
-      message.error('发布帖子失败')
+    } catch (error: any) {
+      message.error(error.response?.data?.error || '发布帖子失败')
     } finally {
       setLoading(false)
     }
@@ -403,10 +404,14 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
             />
           </Form.Item>
 
-          <Form.Item label="上传图片">
+          <Form.Item label="上传图片" extra={`单个文件最大 ${MAX_UPLOAD_SIZE_MB}MB`}>
             <Upload
               multiple
               beforeUpload={(file) => {
+                if (!isUploadSizeAllowed(file)) {
+                  message.error(`${file.name} 超过 ${MAX_UPLOAD_SIZE_MB}MB，无法上传`)
+                  return Upload.LIST_IGNORE
+                }
                 setUploadedImages((prev) => [...prev, file])
                 return false
               }}
@@ -419,10 +424,14 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
             </Upload>
           </Form.Item>
 
-          <Form.Item label="上传附件">
+          <Form.Item label="上传附件" extra={`单个文件最大 ${MAX_UPLOAD_SIZE_MB}MB`}>
             <Upload
               multiple
               beforeUpload={(file) => {
+                if (!isUploadSizeAllowed(file)) {
+                  message.error(`${file.name} 超过 ${MAX_UPLOAD_SIZE_MB}MB，无法上传`)
+                  return Upload.LIST_IGNORE
+                }
                 setUploadedFiles((prev) => [...prev, file])
                 return false
               }}

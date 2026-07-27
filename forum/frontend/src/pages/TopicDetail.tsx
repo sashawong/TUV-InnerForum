@@ -8,6 +8,7 @@ import { useAuthStore } from '../store/authStore'
 import ReplyItem, { Reply } from '../components/ReplyItem'
 import Header from '../components/Header'
 import MarkdownContent from '../components/MarkdownContent'
+import { isUploadSizeAllowed, MAX_UPLOAD_SIZE_MB } from '../utils/upload'
 
 interface TopicAttachment {
   id: number
@@ -158,8 +159,8 @@ const TopicDetail: React.FC = () => {
       setReplyFiles([])
       fetchTopic()
       fetchProfile()
-    } catch (error) {
-      message.error('回复失败')
+    } catch (error: any) {
+      message.error(error.response?.data?.error || '回复失败')
     }
   }
 
@@ -410,6 +411,10 @@ const TopicDetail: React.FC = () => {
             <Upload
               multiple
               beforeUpload={(file) => {
+                if (!isUploadSizeAllowed(file)) {
+                  message.error(`${file.name} 超过 ${MAX_UPLOAD_SIZE_MB}MB，无法上传`)
+                  return Upload.LIST_IGNORE
+                }
                 setReplyImages((prev) => [...prev, file])
                 return false
               }}
@@ -423,6 +428,10 @@ const TopicDetail: React.FC = () => {
             <Upload
               multiple
               beforeUpload={(file) => {
+                if (!isUploadSizeAllowed(file)) {
+                  message.error(`${file.name} 超过 ${MAX_UPLOAD_SIZE_MB}MB，无法上传`)
+                  return Upload.LIST_IGNORE
+                }
                 setReplyFiles((prev) => [...prev, file])
                 return false
               }}
@@ -436,6 +445,7 @@ const TopicDetail: React.FC = () => {
             <Button type="primary" onClick={handleReply}>
               发表回复
             </Button>
+            <Typography.Text type="secondary">单个文件最大 {MAX_UPLOAD_SIZE_MB}MB</Typography.Text>
           </Space>
 
           <List

@@ -14,6 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const TOPIC_POINTS = 10;
 const REPLY_POINTS = 3;
+const MAX_UPLOAD_FILE_SIZE = 5 * 1024 * 1024;
 
 app.use(cors());
 app.use(express.json());
@@ -56,6 +57,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
+  limits: {
+    fileSize: MAX_UPLOAD_FILE_SIZE
+  },
   fileFilter: (req, file, cb) => {
     try {
       file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
@@ -2503,6 +2507,18 @@ app.delete('/api/admin/users/:id', authenticateToken, authenticateAdmin, async (
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
+});
+
+app.use((error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    if (error.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({ error: '单个上传文件不能超过 5MB' });
+    }
+
+    return res.status(400).json({ error: `文件上传失败：${error.message}` });
+  }
+
+  next(error);
 });
 
 app.listen(PORT, () => {
