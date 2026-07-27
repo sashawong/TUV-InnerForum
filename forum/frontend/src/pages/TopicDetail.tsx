@@ -1,11 +1,13 @@
 ﻿import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeftOutlined, DislikeOutlined, LikeOutlined, StarFilled, StarOutlined, UploadOutlined } from '@ant-design/icons'
-import { Button, Card, Image, Input, List, message, Modal, Space, Tag, Typography, Upload } from 'antd'
-import api, { getFileUrl } from '../utils/api'
+import { ArrowLeftOutlined, CalendarOutlined, DislikeOutlined, EyeOutlined, LikeOutlined, RobotOutlined, StarFilled, StarOutlined, UploadOutlined } from '@ant-design/icons'
+import { Alert, Button, Card, DatePicker, Image, Input, List, message, Modal, Space, Tag, Typography, Upload } from 'antd'
+import dayjs, { Dayjs } from 'dayjs'
+import api, { downloadWatermarkedAttachment, getFileUrl, previewWatermarkedAttachment } from '../utils/api'
 import { useAuthStore } from '../store/authStore'
 import ReplyItem, { Reply } from '../components/ReplyItem'
 import Header from '../components/Header'
+import MarkdownContent from '../components/MarkdownContent'
 
 interface TopicAttachment {
   id: number
@@ -27,6 +29,7 @@ interface TopicDetailData {
   author_points?: number
   created_at: string
   updated_at?: string
+  module?: 'tire' | 'lighting' | 'vehicle'
   is_pinned: number
   post_type: string
   tags: string[]
@@ -35,6 +38,13 @@ interface TopicDetailData {
   replies: Reply[]
   images: TopicImage[]
   attachments: TopicAttachment[]
+}
+
+interface TimeEditTarget {
+  type: 'topic' | 'reply'
+  id: number
+  label: string
+  createdAt: string
 }
 
 const TopicDetail: React.FC = () => {
@@ -54,6 +64,10 @@ const TopicDetail: React.FC = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [editingReplyId, setEditingReplyId] = useState<number | null>(null)
   const [editingContent, setEditingContent] = useState('')
+  const [aiLoading, setAiLoading] = useState<'reply' | null>(null)
+  const [timeEditTarget, setTimeEditTarget] = useState<TimeEditTarget | null>(null)
+  const [timeEditValue, setTimeEditValue] = useState<Dayjs | null>(null)
+  const [savingTime, setSavingTime] = useState(false)
 
   const fetchProfile = async () => {
     if (!user) return
@@ -198,7 +212,7 @@ const TopicDetail: React.FC = () => {
     try {
       await api.delete(`/topics/${id}`)
       message.success('帖子已删除')
-      navigate('/')
+      navigate(topic?.module === 'lighting' ? '/lighting' : topic?.module === 'vehicle' ? '/vehicle' : '/forum')
     } catch (error) {
       message.error('删除失败')
     }
@@ -237,18 +251,59 @@ const TopicDetail: React.FC = () => {
     }
   }
 
+  const openTimeEditor = (target: TimeEditTarget) => {
+    setTimeEditTarget(target)
+    setTimeEditValue(dayjs(target.createdAt))
+  }
+
+  const handleSaveTime = async () => {
+    if (!timeEditTarget || !timeEditValue) {
+      message.warning('请选择时间')
+      return
+    }
+
+    setSavingTime(true)
+    try {
+      const endpoint = timeEditTarget.type === 'topic' ? `/topics/${timeEditTarget.id}` : `/replies/${timeEditTarget.id}`
+      await api.put(endpoint, { created_at: timeEditValue.toISOString() })
+      message.success(timeEditTarget.type === 'topic' ? '帖子发布时间已更新' : '回复时间已更新')
+      setTimeEditTarget(null)
+      setTimeEditValue(null)
+      fetchTopic()
+    } catch (error: any) {
+      message.error(error.response?.data?.error || '更新时间失败')
+    } finally {
+      setSavingTime(false)
+    }
+  }
+
+  const handleInviteAiReply = async () => {
+    if (!id) return
+    setAiLoading('reply')
+    try {
+      await api.post(`/ai/topics/${id}/reply`)
+      message.success('AI 法规助手已生成回复')
+      fetchTopic()
+    } catch (error: any) {
+      message.error(error.response?.data?.error || 'AI 回复失败')
+    } finally {
+      setAiLoading(null)
+    }
+  }
+
   if (loading || !topic) {
     return <div>加载中...</div>
   }
 
   const isAdmin = user?.role === 'admin'
   const isAuthor = user?.id === topic.author_id
+  const modulePath = topic.module === 'lighting' ? '/lighting' : topic.module === 'vehicle' ? '/vehicle' : '/forum'
 
   return (
     <div>
       <Header />
-      <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/')} style={{ marginBottom: 16 }}>
-        返回首页
+      <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(modulePath)} style={{ marginBottom: 16 }}>
+        返回论坛
       </Button>
 
       <Card loading={loading}>
@@ -267,7 +322,9 @@ const TopicDetail: React.FC = () => {
           {topic.author_name} · {topic.author_points ?? 0} 积分 · {new Date(topic.created_at).toLocaleString('zh-CN')}
         </Typography.Text>
 
-        <div style={{ marginTop: 24, marginBottom: 24, whiteSpace: 'pre-wrap', lineHeight: 1.8 }}>{topic.content}</div>
+        <div style={{ marginTop: 24, marginBottom: 24 }}>
+          <MarkdownContent content={topic.content} />
+        </div>
 
         {topic.images?.length > 0 && (
           <div style={{ marginBottom: 24 }}>
@@ -287,9 +344,15 @@ const TopicDetail: React.FC = () => {
               dataSource={topic.attachments}
               renderItem={(attachment) => (
                 <List.Item>
-                  <a href={getFileUrl(attachment.filename)} download={attachment.original_name}>
-                    {attachment.original_name}
-                  </a>
+                  <Space wrap>
+                    <Typography.Text>{attachment.original_name}</Typography.Text>
+                    <Button size="small" icon={<EyeOutlined />} onClick={() => previewWatermarkedAttachment(attachment.id).catch(() => message.error('预览失败'))}>
+                      水印预览
+                    </Button>
+                    <Button size="small" onClick={() => downloadWatermarkedAttachment(attachment.id, attachment.original_name).catch(() => message.error('下载失败'))}>
+                      水印下载
+                    </Button>
+                  </Space>
                 </List.Item>
               )}
             />
@@ -306,6 +369,17 @@ const TopicDetail: React.FC = () => {
           <Button icon={isFavorited ? <StarFilled /> : <StarOutlined />} onClick={handleFavorite}>
             {isFavorited ? '已收藏' : '收藏'}
           </Button>
+          <Button icon={<RobotOutlined />} loading={aiLoading === 'reply'} onClick={handleInviteAiReply}>
+            邀请AI回答
+          </Button>
+          {isAdmin && (
+            <Button
+              icon={<CalendarOutlined />}
+              onClick={() => openTimeEditor({ type: 'topic', id: topic.id, label: topic.title, createdAt: topic.created_at })}
+            >
+              修改发布时间
+            </Button>
+          )}
           {(isAdmin || isAuthor) && (
             <Button danger onClick={() => setDeleteModalVisible(true)}>
               删除帖子
@@ -315,6 +389,15 @@ const TopicDetail: React.FC = () => {
 
         <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: 24 }}>
           <Typography.Title level={4}>回复 ({topic.replies.length})</Typography.Title>
+          {aiLoading && (
+            <Alert
+              type="info"
+              showIcon
+              style={{ marginBottom: 16 }}
+              message="AI法规助手正在生成回复..."
+              description="AI 会结合当前帖子和现有回复内容，生成一条新的法规建议回复。"
+            />
+          )}
           <Input.TextArea
             rows={4}
             placeholder="输入回复内容..."
@@ -381,6 +464,14 @@ const TopicDetail: React.FC = () => {
                   }}
                   onSaveEdit={handleSaveEdit}
                   onDeleteReply={handleDeleteReply}
+                  onEditTime={(replyItem) =>
+                    openTimeEditor({
+                      type: 'reply',
+                      id: replyItem.id,
+                      label: `${replyItem.author_name} 的回复`,
+                      createdAt: replyItem.created_at,
+                    })
+                  }
                 />
               </List.Item>
             )}
@@ -397,6 +488,30 @@ const TopicDetail: React.FC = () => {
         cancelText="取消"
       >
         确认删除这篇帖子吗？此操作不可撤销。
+      </Modal>
+
+      <Modal
+        title={timeEditTarget?.type === 'topic' ? '修改帖子发布时间' : '修改回复时间'}
+        open={!!timeEditTarget}
+        onOk={handleSaveTime}
+        onCancel={() => {
+          setTimeEditTarget(null)
+          setTimeEditValue(null)
+        }}
+        confirmLoading={savingTime}
+        okText="保存时间"
+        cancelText="取消"
+      >
+        <Typography.Paragraph type="secondary" ellipsis={{ rows: 2 }}>
+          {timeEditTarget?.label}
+        </Typography.Paragraph>
+        <DatePicker
+          showTime
+          format="YYYY-MM-DD HH:mm:ss"
+          value={timeEditValue}
+          onChange={setTimeEditValue}
+          style={{ width: '100%' }}
+        />
       </Modal>
     </div>
   )

@@ -10,6 +10,41 @@ export const getFileUrl = (path: string): string => {
   return `${uploadsBaseURL}/${path}`
 }
 
+export const downloadWatermarkedAttachment = async (attachmentId: number, fallbackName: string): Promise<void> => {
+  const response = await api.get(`/attachments/${attachmentId}/download-watermarked`, {
+    responseType: 'blob',
+  })
+
+  const contentDisposition = response.headers['content-disposition'] || ''
+  const encodedNameMatch = contentDisposition.match(/filename\*=UTF-8''([^;]+)/i)
+  const filename = encodedNameMatch ? decodeURIComponent(encodedNameMatch[1]) : fallbackName
+  const url = window.URL.createObjectURL(new Blob([response.data]))
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(url)
+}
+
+export const previewWatermarkedAttachment = async (attachmentId: number): Promise<void> => {
+  const previewWindow = window.open('', '_blank', 'noopener,noreferrer')
+  const response = await api.get(`/attachments/${attachmentId}/preview-watermarked`, {
+    responseType: 'blob',
+  })
+
+  const contentType = response.headers['content-type'] || 'application/octet-stream'
+  const url = window.URL.createObjectURL(new Blob([response.data], { type: contentType }))
+  if (previewWindow) {
+    previewWindow.location.href = url
+    window.setTimeout(() => window.URL.revokeObjectURL(url), 60000)
+  } else {
+    window.open(url, '_blank', 'noopener,noreferrer')
+    window.setTimeout(() => window.URL.revokeObjectURL(url), 60000)
+  }
+}
+
 const api = axios.create({
   baseURL: apiBaseURL,
 })

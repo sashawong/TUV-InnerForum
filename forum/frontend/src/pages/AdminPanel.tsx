@@ -1,7 +1,8 @@
 ﻿import React, { useEffect, useState } from 'react'
-import { Button, Card, Form, Input, message, Modal, Popconfirm, Select, Space, Switch, Table, Tabs, Tag, Typography } from 'antd'
-import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Card, DatePicker, Form, Input, message, Modal, Popconfirm, Select, Space, Switch, Table, Tabs, Tag, Typography } from 'antd'
+import { CalendarOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons'
 import { Navigate } from 'react-router-dom'
+import dayjs, { Dayjs } from 'dayjs'
 import api from '../utils/api'
 import { useAuthStore } from '../store/authStore'
 import Header from '../components/Header'
@@ -38,7 +39,10 @@ const AdminPanel: React.FC = () => {
   const [userModalOpen, setUserModalOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null)
   const [savingUser, setSavingUser] = useState(false)
+  const [editingTopicTime, setEditingTopicTime] = useState<AdminTopic | null>(null)
+  const [savingTopicTime, setSavingTopicTime] = useState(false)
   const [form] = Form.useForm()
+  const [topicTimeForm] = Form.useForm<{ created_at: Dayjs }>()
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -154,6 +158,27 @@ const AdminPanel: React.FC = () => {
     }
   }
 
+  const openTopicTimeEditor = (topic: AdminTopic) => {
+    setEditingTopicTime(topic)
+    topicTimeForm.setFieldsValue({ created_at: dayjs(topic.created_at) })
+  }
+
+  const handleSaveTopicTime = async (values: { created_at: Dayjs }) => {
+    if (!editingTopicTime) return
+
+    setSavingTopicTime(true)
+    try {
+      await api.put(`/topics/${editingTopicTime.id}`, { created_at: values.created_at.toISOString() })
+      message.success('帖子发布时间已更新')
+      setEditingTopicTime(null)
+      fetchTopics()
+    } catch (error: any) {
+      message.error(error.response?.data?.error || '更新时间失败')
+    } finally {
+      setSavingTopicTime(false)
+    }
+  }
+
   const userColumns = [
     {
       title: '用户名',
@@ -235,6 +260,12 @@ const AdminPanel: React.FC = () => {
       render: (_: unknown, record: AdminTopic) => `赞 ${record.like_count} / 踩 ${record.dislike_count} / 回复 ${record.reply_count}`,
     },
     {
+      title: '发布时间',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: (value: string) => new Date(value).toLocaleString('zh-CN'),
+    },
+    {
       title: '置顶',
       key: 'pin',
       render: (_: unknown, record: AdminTopic) => (
@@ -245,11 +276,16 @@ const AdminPanel: React.FC = () => {
       title: '操作',
       key: 'actions',
       render: (_: unknown, record: AdminTopic) => (
-        <Popconfirm title="确认删除这个帖子吗？" onConfirm={() => handleDeleteTopic(record.id)}>
-          <Button size="small" danger icon={<DeleteOutlined />}>
-            删除
+        <Space wrap>
+          <Button size="small" icon={<CalendarOutlined />} onClick={() => openTopicTimeEditor(record)}>
+            修改时间
           </Button>
-        </Popconfirm>
+          <Popconfirm title="确认删除这个帖子吗？" onConfirm={() => handleDeleteTopic(record.id)}>
+            <Button size="small" danger icon={<DeleteOutlined />}>
+              删除
+            </Button>
+          </Popconfirm>
+        </Space>
       ),
     },
   ]
@@ -280,12 +316,19 @@ const AdminPanel: React.FC = () => {
           },
           {
             key: 'topics',
-            label: '帖子管理',
-            children: (
-              <Card>
-                <Table rowKey="id" loading={loadingTopics} columns={topicColumns} dataSource={topics} pagination={{ pageSize: 8 }} />
-              </Card>
-            ),
+              label: '帖子管理',
+              children: (
+                <Card>
+                <Table
+                  rowKey="id"
+                  loading={loadingTopics}
+                  columns={topicColumns}
+                  dataSource={topics}
+                  pagination={{ pageSize: 8 }}
+                  scroll={{ x: 980 }}
+                />
+                </Card>
+              ),
           },
         ]}
       />
@@ -320,6 +363,31 @@ const AdminPanel: React.FC = () => {
               <Button onClick={() => setUserModalOpen(false)}>取消</Button>
               <Button type="primary" htmlType="submit" loading={savingUser}>
                 保存
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        title="修改帖子发布时间"
+        open={!!editingTopicTime}
+        onCancel={() => setEditingTopicTime(null)}
+        footer={null}
+        destroyOnClose
+      >
+        <Typography.Paragraph type="secondary" ellipsis={{ rows: 2 }}>
+          {editingTopicTime?.title}
+        </Typography.Paragraph>
+        <Form form={topicTimeForm} layout="vertical" onFinish={handleSaveTopicTime}>
+          <Form.Item label="发布时间" name="created_at" rules={[{ required: true, message: '请选择发布时间' }]}>
+            <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Space style={{ width: '100%', justifyContent: 'flex-end' }}>
+              <Button onClick={() => setEditingTopicTime(null)}>取消</Button>
+              <Button type="primary" htmlType="submit" loading={savingTopicTime}>
+                保存时间
               </Button>
             </Space>
           </Form.Item>

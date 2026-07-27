@@ -7,6 +7,8 @@ export interface User {
   role: string
   email?: string | null
   points: number
+  login_streak?: number
+  last_login_date?: string | null
   created_at?: string
 }
 

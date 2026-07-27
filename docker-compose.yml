@@ -8,6 +8,7 @@ services:
     environment:
       PORT: 3001
       JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
+      CRON_SECRET: ${CRON_SECRET:-tuvforum-daily-hotspots-secret}
       DB_FILE: /app/data/db.json
     volumes:
       - ./forum/backend/uploads:/app/uploads

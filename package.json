@@ -4,5 +4,25 @@
     "pdf-lib": "^1.17.1",
     "puppeteer": "^24.37.5",
     "zustand": "^5.0.11"
-  }
+  },
+  "name": "tuvforum",
+  "version": "1.0.0",
+  "description": "",
+  "main": "convert-to-pdf.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sashawong/TUV-InnerForum.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sashawong/TUV-InnerForum/issues"
+  },
+  "homepage": "https://github.com/sashawong/TUV-InnerForum#readme"
 }

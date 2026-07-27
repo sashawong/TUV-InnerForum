@@ -11,6 +11,7 @@ interface ProfileData {
   email?: string | null
   role: string
   points: number
+  login_streak?: number
   topic_count: number
   reply_count: number
 }
@@ -20,6 +21,7 @@ const UserCenter: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const [form] = Form.useForm()
+  const [passwordForm] = Form.useForm()
   const [profile, setProfile] = useState<ProfileData | null>(null)
 
   useEffect(() => {
@@ -80,6 +82,7 @@ const UserCenter: React.FC = () => {
       <Card style={{ marginBottom: 24 }}>
         <Space size="large" wrap>
           <Statistic title="当前积分" value={profile?.points ?? user.points ?? 0} />
+          <Statistic title="连续登录" value={profile?.login_streak ?? user.login_streak ?? 0} suffix="天" />
           <Statistic title="发帖数" value={profile?.topic_count ?? 0} />
           <Statistic title="回复数" value={profile?.reply_count ?? 0} />
           <Button onClick={() => navigate('/leaderboard')}>查看积分排行榜</Button>
@@ -94,7 +97,7 @@ const UserCenter: React.FC = () => {
             {
               key: 'account',
               label: '账号设置',
-              children: <AccountSettings form={form} profile={profile} onUpdated={fetchProfile} />,
+              children: <AccountSettings form={form} passwordForm={passwordForm} profile={profile} onUpdated={fetchProfile} />,
             },
             {
               key: 'favorites',
@@ -118,23 +121,21 @@ const UserCenter: React.FC = () => {
   )
 }
 
-const AccountSettings: React.FC<{ form: any; profile: ProfileData | null; onUpdated: () => void }> = ({ form, profile, onUpdated }) => {
+const AccountSettings: React.FC<{ form: any; passwordForm: any; profile: ProfileData | null; onUpdated: () => void }> = ({ form, passwordForm, profile, onUpdated }) => {
   const [loading, setLoading] = useState(false)
+  const [passwordLoading, setPasswordLoading] = useState(false)
   const { setUser } = useAuthStore()
 
-  const handleUpdate = async (values: { username: string; password?: string; email?: string }) => {
+  const handleUpdate = async (values: { email?: string }) => {
     setLoading(true)
     try {
       const payload = {
-        username: values.username,
-        password: values.password || undefined,
         email: values.email || null,
       }
       const response = await api.put('/user/profile', payload)
       setUser(response.data.user)
       message.success('个人资料已更新')
       onUpdated()
-      form.setFieldsValue({ password: '' })
     } catch (error: any) {
       message.error(error.response?.data?.error || '更新失败')
     } finally {
@@ -142,23 +143,74 @@ const AccountSettings: React.FC<{ form: any; profile: ProfileData | null; onUpda
     }
   }
 
+  const handlePasswordUpdate = async (values: { current_password: string; new_password: string; confirm_password: string }) => {
+    setPasswordLoading(true)
+    try {
+      await api.put('/user/password', {
+        current_password: values.current_password,
+        new_password: values.new_password,
+      })
+      message.success('密码已更新')
+      passwordForm.resetFields()
+    } catch (error: any) {
+      message.error(error.response?.data?.error || '密码更新失败')
+    } finally {
+      setPasswordLoading(false)
+    }
+  }
+
   return (
-    <Form form={form} layout="vertical" onFinish={handleUpdate} initialValues={{ username: profile?.username, email: profile?.email }}>
-      <Form.Item label="用户名" name="username" rules={[{ required: true, message: '请输入用户名' }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item label="邮箱" name="email">
-        <Input />
-      </Form.Item>
-      <Form.Item label="新密码" name="password">
-        <Input.Password placeholder="不修改可留空" />
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading}>
-          保存设置
-        </Button>
-      </Form.Item>
-    </Form>
+    <Space direction="vertical" size={24} style={{ width: '100%' }}>
+      <Form form={form} layout="vertical" onFinish={handleUpdate} initialValues={{ username: profile?.username, email: profile?.email }}>
+        <Form.Item label="用户名" name="username">
+          <Input disabled />
+        </Form.Item>
+        <Typography.Paragraph type="secondary" style={{ marginTop: -12 }}>
+          用户名作为论坛身份标识，不支持自行修改。
+        </Typography.Paragraph>
+        <Form.Item label="邮箱" name="email">
+          <Input />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={loading}>
+            保存资料
+          </Button>
+        </Form.Item>
+      </Form>
+
+      <Form form={passwordForm} layout="vertical" onFinish={handlePasswordUpdate}>
+        <Typography.Title level={4}>修改登录密码</Typography.Title>
+        <Form.Item label="当前密码" name="current_password" rules={[{ required: true, message: '请输入当前密码' }]}>
+          <Input.Password />
+        </Form.Item>
+        <Form.Item label="新密码" name="new_password" rules={[{ required: true, message: '请输入新密码' }, { min: 6, message: '新密码至少 6 位' }]}>
+          <Input.Password />
+        </Form.Item>
+        <Form.Item
+          label="确认新密码"
+          name="confirm_password"
+          dependencies={['new_password']}
+          rules={[
+            { required: true, message: '请再次输入新密码' },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('new_password') === value) {
+                  return Promise.resolve()
+                }
+                return Promise.reject(new Error('两次输入的新密码不一致'))
+              },
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit" loading={passwordLoading}>
+            更新密码
+          </Button>
+        </Form.Item>
+      </Form>
+    </Space>
   )
 }
 

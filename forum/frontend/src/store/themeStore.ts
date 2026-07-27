@@ -27,7 +27,7 @@ export const useThemeStore = create<ThemeState>()(
 
 export const translations = {
   zh: {
-    forumTitle: '轮胎法规分享论坛',
+    forumTitle: '全球车辆法规分享论坛',
     home: '首页',
     userCenter: '用户中心',
     settings: '设置',
@@ -90,7 +90,7 @@ export const translations = {
     english: 'English',
   },
   en: {
-    forumTitle: 'Tire Regulation Forum',
+    forumTitle: 'Global Vehicle Regulation Forum',
     home: 'Home',
     userCenter: 'User Center',
     settings: 'Settings',

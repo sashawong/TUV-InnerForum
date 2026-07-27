@@ -4,12 +4,15 @@ import { App as AntApp, Layout, Button, Drawer } from 'antd'
 import { MenuOutlined } from '@ant-design/icons'
 import Sidebar from './components/Sidebar'
 import Home from './pages/Home'
+import LandingPage from './pages/LandingPage'
 import TopicDetail from './pages/TopicDetail'
 import UserCenter from './pages/UserCenter'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
 import AdminPanel from './pages/AdminPanel'
 import Leaderboard from './pages/Leaderboard'
+import AIAssistant from './pages/AIAssistant'
+import VideoColumn from './pages/VideoColumn'
 import { useAuthStore } from './store/authStore'
 import ThemeProvider from './components/ThemeProvider'
 
@@ -19,6 +22,7 @@ function App() {
   const { user } = useAuthStore()
   const location = useLocation()
   const isLoginPage = location.pathname === '/login'
+  const isLandingPage = location.pathname === '/'
   const [isMobile, setIsMobile] = useState(false)
   const [sidebarVisible, setSidebarVisible] = useState(false)
 
@@ -47,7 +51,7 @@ function App() {
     <ThemeProvider>
       <AntApp>
         <Layout style={{ minHeight: '100vh', background: 'var(--bg-color)' }}>
-          {!isMobile ? (
+          {!isMobile && !isLandingPage ? (
             <Sidebar isMobile={false} />
           ) : (
             <>
@@ -66,10 +70,21 @@ function App() {
                   }}
                 />
               )}
-              <Drawer title="菜单" placement="left" onClose={() => setSidebarVisible(false)} open={sidebarVisible} width={256}>
+              <Drawer title="菜单" placement="left" onClose={() => setSidebarVisible(false)} open={sidebarVisible} width={280}>
                 <Sidebar isMobile />
               </Drawer>
             </>
+          )}
+          {!isMobile && isLandingPage && (
+            <Button
+              type="primary"
+              shape="circle"
+              size="large"
+              icon={<MenuOutlined />}
+              onClick={() => setSidebarVisible(true)}
+              className="floating-menu-button"
+              aria-label="打开菜单"
+            />
           )}
           <Layout>
             <Content
@@ -80,9 +95,14 @@ function App() {
               }}
             >
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/forum" element={<Home moduleKey="tire" />} />
                 <Route path="/topic/:id" element={<TopicDetail />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/video-column" element={<VideoColumn />} />
+                <Route path="/lighting" element={<Home moduleKey="lighting" />} />
+                <Route path="/vehicle" element={<Home moduleKey="vehicle" />} />
+                <Route path="/ai-assistant" element={<AIAssistant />} />
                 <Route path="/user/*" element={<UserCenter />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/login" element={<Navigate to="/" replace />} />
@@ -97,4 +117,3 @@ function App() {
 }
 
 export default App
-

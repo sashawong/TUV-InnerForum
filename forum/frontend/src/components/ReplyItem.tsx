@@ -1,8 +1,9 @@
 ﻿import React from 'react'
 import { Button, Input, Space, Image, List, Popconfirm, Typography } from 'antd'
-import { LikeOutlined, DislikeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
-import { getFileUrl } from '../utils/api'
+import { LikeOutlined, DislikeOutlined, DeleteOutlined, EditOutlined, EyeOutlined, CalendarOutlined } from '@ant-design/icons'
+import { downloadWatermarkedAttachment, getFileUrl, previewWatermarkedAttachment } from '../utils/api'
 import { useAuthStore } from '../store/authStore'
+import MarkdownContent from './MarkdownContent'
 
 interface ReplyAttachment {
   id: number
@@ -48,6 +49,7 @@ interface ReplyItemProps {
   onCancelEdit: () => void
   onSaveEdit: (replyId: number) => void
   onDeleteReply: (replyId: number) => void
+  onEditTime: (reply: Reply) => void
 }
 
 const ReplyItem: React.FC<ReplyItemProps> = ({
@@ -68,6 +70,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
   onCancelEdit,
   onSaveEdit,
   onDeleteReply,
+  onEditTime,
 }) => {
   const { user } = useAuthStore()
   const isReplying = replyingTo === reply.id
@@ -110,7 +113,9 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           </Space>
         </>
       ) : (
-        <div style={{ whiteSpace: 'pre-wrap', marginBottom: 8 }}>{reply.content}</div>
+        <div style={{ marginBottom: 8 }}>
+          <MarkdownContent content={reply.content} />
+        </div>
       )}
 
       {reply.images && reply.images.length > 0 && (
@@ -134,9 +139,15 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           dataSource={reply.attachments}
           renderItem={(attachment) => (
             <List.Item>
-              <a href={getFileUrl(attachment.filename)} download={attachment.original_name}>
-                {attachment.original_name}
-              </a>
+              <Space wrap>
+                <Typography.Text>{attachment.original_name}</Typography.Text>
+                <Button size="small" icon={<EyeOutlined />} onClick={() => previewWatermarkedAttachment(attachment.id)}>
+                  水印预览
+                </Button>
+                <Button size="small" onClick={() => downloadWatermarkedAttachment(attachment.id, attachment.original_name)}>
+                  水印下载
+                </Button>
+              </Space>
             </List.Item>
           )}
         />
@@ -165,6 +176,11 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
         {canManage && !isEditing && (
           <Button size="small" icon={<EditOutlined />} onClick={() => onStartEdit(reply)}>
             编辑
+          </Button>
+        )}
+        {user?.role === 'admin' && (
+          <Button size="small" icon={<CalendarOutlined />} onClick={() => onEditTime(reply)}>
+            修改时间
           </Button>
         )}
         {canManage && (
@@ -216,6 +232,7 @@ const ReplyItem: React.FC<ReplyItemProps> = ({
           onCancelEdit={onCancelEdit}
           onSaveEdit={onSaveEdit}
           onDeleteReply={onDeleteReply}
+          onEditTime={onEditTime}
         />
       ))}
     </div>
