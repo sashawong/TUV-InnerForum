@@ -1126,13 +1126,24 @@ app.post('/api/notifications/read', authenticateToken, async (req, res) => {
 
 app.get('/api/topics', async (req, res) => {
   try {
-    const { search, module: moduleName, page, limit } = req.query;
+    const { search, module: moduleName, page, limit, source } = req.query;
 
     await db.read();
     ensureDbShape();
     recalculateUserPoints();
 
     let topics = db.data.topics.map(buildTopicResponse);
+
+    if (source === 'ai' || source === 'user') {
+      topics = topics.filter((topic) => {
+        const author = db.data.users.find((user) => user.id === topic.author_id);
+        const isAiTopic =
+          author?.role === 'ai_assistant' ||
+          author?.username === AI_ASSISTANT_USERNAME;
+
+        return source === 'ai' ? isAiTopic : !isAiTopic;
+      });
+    }
 
     if (moduleName && TOPIC_MODULES.has(String(moduleName))) {
       topics = topics.filter((topic) => topic.module === moduleName);

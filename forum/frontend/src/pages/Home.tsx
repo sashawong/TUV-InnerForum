@@ -88,7 +88,20 @@ interface PaginatedTopicsResponse {
   pagination: TopicPagination
 }
 
-const TOPICS_PAGE_SIZE = 12
+type TopicSource = 'ai' | 'user'
+
+interface TopicFeed {
+  topics: Topic[]
+  loading: boolean
+  loadingMore: boolean
+  hasMore: boolean
+  total: number
+  loadMoreRef: React.RefObject<HTMLDivElement>
+  loadNext: () => void
+  reload: () => void
+}
+
+const TOPICS_PAGE_SIZE = 8
 
 const columnCardStyle: React.CSSProperties = {
   height: '100%',
@@ -99,21 +112,111 @@ const listBodyStyle: React.CSSProperties = {
   overflow: 'auto',
 }
 
-const isAiAuthor = (authorName: string): boolean => {
-  const normalized = (authorName || '').toLowerCase()
-  return normalized.includes('ai') || normalized.includes('助手') || normalized.includes('robot')
+const useTopicFeed = (moduleKey: TopicModule, source: TopicSource): TopicFeed => {
+  const [topics, setTopics] = useState<Topic[]>([])
+  const [loading, setLoading] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const [total, setTotal] = useState(0)
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
+  const loadingPagesRef = useRef(new Set<string>())
+  const activeFeedRef = useRef(`${moduleKey}:${source}`)
+
+  activeFeedRef.current = `${moduleKey}:${source}`
+
+  const fetchPage = useCallback(
+    async (pageNumber: number, replace = false) => {
+      const feedKey = `${moduleKey}:${source}`
+      const requestKey = `${feedKey}:${pageNumber}`
+      if (loadingPagesRef.current.has(requestKey)) return
+
+      loadingPagesRef.current.add(requestKey)
+      replace ? setLoading(true) : setLoadingMore(true)
+
+      try {
+        const response = await api.get<PaginatedTopicsResponse>('/topics', {
+          params: { module: moduleKey, source, page: pageNumber, limit: TOPICS_PAGE_SIZE },
+        })
+
+        if (activeFeedRef.current !== feedKey) return
+
+        const { items, pagination } = response.data
+        setTopics((previous) => {
+          if (replace) return items
+
+          const existingIds = new Set(previous.map((topic) => topic.id))
+          return [...previous, ...items.filter((topic) => !existingIds.has(topic.id))]
+        })
+        setCurrentPage(pagination.page)
+        setHasMore(pagination.has_more)
+        setTotal(pagination.total)
+      } catch (error) {
+        message.error(`获取${source === 'ai' ? 'AI 日报' : '用户帖子'}失败`)
+      } finally {
+        loadingPagesRef.current.delete(requestKey)
+        if (activeFeedRef.current === feedKey) {
+          replace ? setLoading(false) : setLoadingMore(false)
+        }
+      }
+    },
+    [moduleKey, source]
+  )
+
+  useEffect(() => {
+    setTopics([])
+    setCurrentPage(0)
+    setHasMore(true)
+    setTotal(0)
+    fetchPage(1, true)
+  }, [fetchPage])
+
+  useEffect(() => {
+    const target = loadMoreRef.current
+    if (
+      !target ||
+      !('IntersectionObserver' in window) ||
+      loading ||
+      loadingMore ||
+      !hasMore ||
+      currentPage === 0
+    ) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          fetchPage(currentPage + 1)
+        }
+      },
+      { rootMargin: '320px 0px' }
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [currentPage, fetchPage, hasMore, loading, loadingMore, topics.length])
+
+  return {
+    topics,
+    loading,
+    loadingMore,
+    hasMore,
+    total,
+    loadMoreRef,
+    loadNext: () => fetchPage(currentPage + 1),
+    reload: () => fetchPage(1, true),
+  }
 }
 
 const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const moduleConfig = moduleConfigs[moduleKey]
-  const [topics, setTopics] = useState<Topic[]>([])
+  const aiFeed = useTopicFeed(moduleKey, 'ai')
+  const userFeed = useTopicFeed(moduleKey, 'user')
+  const totalTopics = aiFeed.total + userFeed.total
   const [loading, setLoading] = useState(false)
-  const [loadingMore, setLoadingMore] = useState(false)
-  const [currentPage, setCurrentPage] = useState(0)
-  const [hasMore, setHasMore] = useState(true)
-  const [totalTopics, setTotalTopics] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
@@ -128,77 +231,12 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
   const [uploadedImages, setUploadedImages] = useState<any[]>([])
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([])
   const [form] = Form.useForm()
-  const loadMoreRef = useRef<HTMLDivElement | null>(null)
-  const loadingPagesRef = useRef(new Set<string>())
-  const activeModuleRef = useRef(moduleKey)
-
-  activeModuleRef.current = moduleKey
-
-  const fetchTopics = useCallback(
-    async (pageNumber: number, replace = false) => {
-      const requestKey = `${moduleKey}:${pageNumber}`
-      if (loadingPagesRef.current.has(requestKey)) return
-
-      loadingPagesRef.current.add(requestKey)
-      replace ? setLoading(true) : setLoadingMore(true)
-
-      try {
-        const response = await api.get<PaginatedTopicsResponse>('/topics', {
-          params: { module: moduleKey, page: pageNumber, limit: TOPICS_PAGE_SIZE },
-        })
-
-        if (activeModuleRef.current !== moduleKey) return
-
-        const { items, pagination } = response.data
-        setTopics((previous) => {
-          if (replace) return items
-
-          const existingIds = new Set(previous.map((topic) => topic.id))
-          return [...previous, ...items.filter((topic) => !existingIds.has(topic.id))]
-        })
-        setCurrentPage(pagination.page)
-        setHasMore(pagination.has_more)
-        setTotalTopics(pagination.total)
-      } catch (error) {
-        message.error('获取帖子失败')
-      } finally {
-        loadingPagesRef.current.delete(requestKey)
-        if (activeModuleRef.current === moduleKey) {
-          replace ? setLoading(false) : setLoadingMore(false)
-        }
-      }
-    },
-    [moduleKey]
-  )
 
   useEffect(() => {
-    setTopics([])
-    setCurrentPage(0)
-    setHasMore(true)
-    setTotalTopics(0)
-    fetchTopics(1, true)
-
     const handleCreateTopic = () => setIsModalOpen(true)
     window.addEventListener('createTopic', handleCreateTopic)
     return () => window.removeEventListener('createTopic', handleCreateTopic)
-  }, [fetchTopics])
-
-  useEffect(() => {
-    const target = loadMoreRef.current
-    if (!target || loading || loadingMore || !hasMore || currentPage === 0) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          fetchTopics(currentPage + 1)
-        }
-      },
-      { rootMargin: '320px 0px' }
-    )
-
-    observer.observe(target)
-    return () => observer.disconnect()
-  }, [currentPage, fetchTopics, hasMore, loading, loadingMore, topics.length])
+  }, [])
 
   const handleSearch = async (query: string) => {
     const trimmed = query.trim()
@@ -252,7 +290,8 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
       form.resetFields()
       setUploadedImages([])
       setUploadedFiles([])
-      fetchTopics(1, true)
+      aiFeed.reload()
+      userFeed.reload()
     } catch (error: any) {
       message.error(error.response?.data?.error || '发布帖子失败')
     } finally {
@@ -299,9 +338,6 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
     </Card>
   )
 
-  const aiDailyTopics = topics.filter((topic) => isAiAuthor(topic.author_name))
-  const userTopics = topics.filter((topic) => !isAiAuthor(topic.author_name))
-
   const renderTopicResult = (item: SearchTopicResult) => (
     <List.Item style={{ cursor: 'pointer', paddingInline: 0 }} onClick={() => openTopic(item.topic_id)}>
       <Space direction="vertical" size={4} style={{ width: '100%' }}>
@@ -346,51 +382,79 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
         </Typography.Text>
       </Card>
 
-      {topics.length === 0 ? (
-        <Card loading={loading}>
-          <Empty description={`暂无${moduleConfig.title}帖子，点击右上角发布第一篇`} />
-        </Card>
-      ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-            gap: 16,
-            alignItems: 'start',
-          }}
-        >
-          <Card
-            title="AI 日报"
-            extra={<Badge count={aiDailyTopics.length} />}
-            bodyStyle={{ display: 'grid', gap: 12 }}
-          >
-            {aiDailyTopics.length === 0 ? <Empty description="暂无 AI 日报" /> : aiDailyTopics.map(renderTopicCard)}
-          </Card>
-
-          <Card
-            title="用户帖子"
-            extra={<Badge count={userTopics.length} />}
-            bodyStyle={{ display: 'grid', gap: 12 }}
-          >
-            {userTopics.length === 0 ? <Empty description="暂无用户帖子" /> : userTopics.map(renderTopicCard)}
-          </Card>
-        </div>
-      )}
-
       <div
-        ref={loadMoreRef}
-        style={{ minHeight: 56, display: 'grid', placeItems: 'center', marginTop: 16 }}
-        aria-live="polite"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+          gap: 16,
+          alignItems: 'start',
+        }}
       >
-        {loadingMore && (
-          <Space>
-            <Spin size="small" />
-            <Typography.Text type="secondary">正在加载更多帖子...</Typography.Text>
-          </Space>
-        )}
-        {!loading && !loadingMore && !hasMore && topics.length > 0 && (
-          <Typography.Text type="secondary">已加载全部 {totalTopics} 条帖子</Typography.Text>
-        )}
+        <Card
+          title="AI 日报"
+          extra={<Badge count={aiFeed.total} overflowCount={999} />}
+          loading={aiFeed.loading && aiFeed.topics.length === 0}
+          bodyStyle={{ display: 'grid', gap: 12 }}
+        >
+          {aiFeed.topics.length === 0 && !aiFeed.loading ? (
+            <Empty description="暂无 AI 日报" />
+          ) : (
+            aiFeed.topics.map(renderTopicCard)
+          )}
+          <div
+            ref={aiFeed.loadMoreRef}
+            style={{ minHeight: 44, display: 'grid', placeItems: 'center' }}
+            aria-live="polite"
+          >
+            {aiFeed.loadingMore && (
+              <Space>
+                <Spin size="small" />
+                <Typography.Text type="secondary">正在加载更多日报...</Typography.Text>
+              </Space>
+            )}
+            {!aiFeed.loading && !aiFeed.loadingMore && aiFeed.hasMore && (
+              <Button type="link" onClick={aiFeed.loadNext}>
+                向下滚动或点击加载更多日报
+              </Button>
+            )}
+            {!aiFeed.loading && !aiFeed.hasMore && aiFeed.topics.length > 0 && (
+              <Typography.Text type="secondary">已加载全部 {aiFeed.total} 条日报</Typography.Text>
+            )}
+          </div>
+        </Card>
+
+        <Card
+          title="用户帖子"
+          extra={<Badge count={userFeed.total} overflowCount={999} />}
+          loading={userFeed.loading && userFeed.topics.length === 0}
+          bodyStyle={{ display: 'grid', gap: 12 }}
+        >
+          {userFeed.topics.length === 0 && !userFeed.loading ? (
+            <Empty description="暂无用户帖子" />
+          ) : (
+            userFeed.topics.map(renderTopicCard)
+          )}
+          <div
+            ref={userFeed.loadMoreRef}
+            style={{ minHeight: 44, display: 'grid', placeItems: 'center' }}
+            aria-live="polite"
+          >
+            {userFeed.loadingMore && (
+              <Space>
+                <Spin size="small" />
+                <Typography.Text type="secondary">正在加载更多用户帖子...</Typography.Text>
+              </Space>
+            )}
+            {!userFeed.loading && !userFeed.loadingMore && userFeed.hasMore && (
+              <Button type="link" onClick={userFeed.loadNext}>
+                向下滚动或点击加载更多用户帖子
+              </Button>
+            )}
+            {!userFeed.loading && !userFeed.hasMore && userFeed.topics.length > 0 && (
+              <Typography.Text type="secondary">已加载全部 {userFeed.total} 条用户帖子</Typography.Text>
+            )}
+          </div>
+        </Card>
       </div>
 
       <Modal
