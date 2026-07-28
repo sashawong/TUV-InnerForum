@@ -33,7 +33,7 @@ export const translations = {
     settings: '设置',
     favorites: '我的收藏',
     history: '历史记录',
-    messages: '消息记录',
+    messages: '消息回复',
     accountSettings: '账号设置',
     login: '登录',
     logout: '退出登录',

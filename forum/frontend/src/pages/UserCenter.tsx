@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { Button, Card, Form, Input, List, message, Space, Statistic, Tabs, Tag, Typography } from 'antd'
+import { ArrowRightOutlined, MessageOutlined } from '@ant-design/icons'
+import { Button, Card, Form, Input, List, message, Space, Statistic, Tabs, Tag, theme, Typography } from 'antd'
 import api from '../utils/api'
 import { useAuthStore } from '../store/authStore'
 import Header from '../components/Header'
@@ -14,6 +15,14 @@ interface ProfileData {
   login_streak?: number
   topic_count: number
   reply_count: number
+}
+
+interface ReplyMessage {
+  id: number
+  topic_id: number
+  topic_title: string
+  content: string
+  created_at: string
 }
 
 const UserCenter: React.FC = () => {
@@ -111,7 +120,7 @@ const UserCenter: React.FC = () => {
             },
             {
               key: 'messages',
-              label: '我的回复',
+              label: '消息回复',
               children: <Messages navigate={navigate} />,
             },
           ]}
@@ -261,7 +270,8 @@ const History: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) =
 }
 
 const Messages: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
-  const [messages, setMessages] = useState<any[]>([])
+  const { token } = theme.useToken()
+  const [messages, setMessages] = useState<ReplyMessage[]>([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -281,28 +291,83 @@ const Messages: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
   }, [])
 
   return (
-    <List
-      loading={loading}
-      locale={{ emptyText: '还没有回复记录' }}
-      dataSource={messages}
-      renderItem={(item) => (
-        <List.Item onClick={() => navigate(`/topic/${item.topic_id}`)} style={{ cursor: 'pointer' }}>
-          <List.Item.Meta
-            title={item.topic_title}
-            description={
-              <div>
-                <Typography.Paragraph ellipsis={{ rows: 2 }} style={{ marginBottom: 8 }}>
+    <Space direction="vertical" size={16} style={{ width: '100%' }}>
+      <div>
+        <Typography.Title level={4} style={{ margin: 0 }}>
+          我参与过的回复
+        </Typography.Title>
+        <Typography.Text type="secondary">
+          共 {messages.length} 条，每一条对应你在不同帖子中发表的回复。
+        </Typography.Text>
+      </div>
+
+      <List
+        loading={loading}
+        locale={{ emptyText: '还没有参与过帖子回复' }}
+        dataSource={messages}
+        pagination={
+          messages.length > 8
+            ? {
+                pageSize: 8,
+                showSizeChanger: false,
+                hideOnSinglePage: true,
+                position: 'bottom',
+                align: 'center',
+              }
+            : false
+        }
+        renderItem={(item) => (
+          <List.Item
+            style={{
+              marginBottom: 12,
+              padding: 16,
+              cursor: 'pointer',
+              border: `1px solid ${token.colorBorderSecondary}`,
+              borderRadius: token.borderRadiusLG,
+              background: token.colorFillAlter,
+              transition: 'border-color 160ms ease, transform 160ms ease',
+            }}
+            onClick={() => navigate(`/topic/${item.topic_id}`)}
+          >
+            <Space align="start" size={14} style={{ width: '100%' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  flex: '0 0 auto',
+                  width: 36,
+                  height: 36,
+                  placeItems: 'center',
+                  borderRadius: 10,
+                  color: token.colorPrimary,
+                  background: token.colorPrimaryBg,
+                }}
+              >
+                <MessageOutlined />
+              </div>
+              <Space direction="vertical" size={7} style={{ minWidth: 0, width: '100%' }}>
+                <Space wrap size={8}>
+                  <Tag color="blue" style={{ marginInlineEnd: 0 }}>
+                    我的回复
+                  </Tag>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                    {new Date(item.created_at).toLocaleString('zh-CN')}
+                  </Typography.Text>
+                </Space>
+                <Typography.Text strong style={{ fontSize: 16 }}>
+                  {item.topic_title}
+                </Typography.Text>
+                <Typography.Paragraph ellipsis={{ rows: 3 }} style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
                   {item.content}
                 </Typography.Paragraph>
-                <Typography.Text type="secondary">
-                  回复时间：{new Date(item.created_at).toLocaleString('zh-CN')}
-                </Typography.Text>
-              </div>
-            }
-          />
-        </List.Item>
-      )}
-    />
+                <Button type="link" size="small" icon={<ArrowRightOutlined />} style={{ width: 'fit-content', paddingInline: 0 }}>
+                  查看原帖
+                </Button>
+              </Space>
+            </Space>
+          </List.Item>
+        )}
+      />
+    </Space>
   )
 }
 

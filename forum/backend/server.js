@@ -1126,7 +1126,7 @@ app.post('/api/notifications/read', authenticateToken, async (req, res) => {
 
 app.get('/api/topics', async (req, res) => {
   try {
-    const { search, module: moduleName } = req.query;
+    const { search, module: moduleName, page, limit } = req.query;
 
     await db.read();
     ensureDbShape();
@@ -1157,6 +1157,25 @@ app.get('/api/topics', async (req, res) => {
 
       return new Date(b.created_at) - new Date(a.created_at);
     });
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNumber = Math.max(1, Number.parseInt(String(page || 1), 10) || 1);
+      const pageSize = Math.min(30, Math.max(1, Number.parseInt(String(limit || 12), 10) || 12));
+      const total = topics.length;
+      const start = (pageNumber - 1) * pageSize;
+      const end = start + pageSize;
+
+      return res.json({
+        items: topics.slice(start, end),
+        pagination: {
+          page: pageNumber,
+          limit: pageSize,
+          total,
+          total_pages: Math.ceil(total / pageSize),
+          has_more: end < total
+        }
+      });
+    }
 
     res.json(topics);
   } catch (error) {

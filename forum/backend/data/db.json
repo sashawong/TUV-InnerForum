@@ -3465,17 +3465,145 @@
       "updated_at": "2026-07-26T14:22:56.870Z"
     },
     {
-      "id": 1785076238082,
+      "id": 1785148200256,
       "title": "莱茵目前能进行那些轮胎相关测试",
-      "content": "目前可以进行的轮胎测试有哪些~",
+      "content": "莱茵目前能进行那些轮胎相关测试",
       "author_id": 1783743113152,
       "is_pinned": 0,
-      "post_type": "help",
+      "post_type": "share",
+      "module": "tire",
       "tags": [
-        "分享"
+        "UNECE",
+        "求助"
       ],
-      "created_at": "2026-07-26T14:30:38.082Z",
-      "updated_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.256Z",
+      "updated_at": "2026-07-27T10:30:00.256Z"
+    },
+    {
+      "id": 1785160820608,
+      "title": "【AI日报】2026-07-27 国际法规热点汇总",
+      "content": "**AI 法规日报（2026‑07‑27）**  \n*根据今日抓取的 EUR‑Lex、ISO、UNECE、Tyres Europe、RDW Type Approval 等来源整理*  \n\n---\n\n### 一、今日国际法规热点概览  \n今日未检索到任何 **全新** 或 **已抓取但有更新** 的国际法规文件（包括条例、指令、标准或技术法规）。所有抓取结果均为历史重复的词典/百科条目，与轮胎、汽车合规监管无直接关联。\n\n### 二、重点法规动态  \n- **无新法规动态可报告**。  \n- 今日抓取的九条链接均为对 “regulation” 这一英语词汇的中文解释、翻译或用法示例（如剑桥词典、百度百科、欧路词典等），不涉及具体的立法文件、修订案或标准发布。\n\n### 三、对轮胎/汽车合规可能产生的影响  \n基于上述情况，**今日无法识别出会对轮胎或汽车合规产生影响的新法规或标准更新**。因此，现有合规要求（如 UNECE R30、R117、ISO 9001、欧盟轮胎标签法规等）暂无变动，企业可维持现有的合规流程。\n\n### 四、建议关注与后续动作  \n1. **维持常规监测**：继续每日按计划检索 EUR‑Lex、ISO、UNECE、Tyres Europe、RDW Type Approval 等官方渠道，以捕捉可能的更新。  \n2. **关注即将发布的公告**：注意各监管机构的年度工作计划（如 UNECE WP.29、欧盟委员会的《轮胎标签修订》、ISO/TC 45 轮胎及轮辋标准化委员会）以及可能在下周或下月发布的征求意见稿。  \n3. **内部合规复核**：利用今日无新变动的机会，对现有的轮胎/汽车产品合规文件（型式批准报告、标签、测试报告）进行一次全面复核，确保与最新已生效的法规保持一致。  \n4. **记录与存档**：将今日的抓取结果（即便为重复来源）记录在日志中，以便后续审计时展示监测过程的完整性。  \n\n---\n\n**消息来源（今日抓取的重复来源，供复核参考）**  \n\n1. https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD-%E6%B1%89%E8%AF%AD-%E7%AE%80%E4%BD%93/regulation  \n2. https://baike.baidu.com/item/regulation/1850332  \n3. https://www.iciba.com/word?w=regulation  \n4. https://dict.eudic.net/dicts/en/regulation  \n5. https://www.iciba.com/word?w=+Regulations  \n6. https://koolearn.com/dict/wd_124177.html  \n7. https://zhuanlan.zhihu.com/p/28668438986  \n8. https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD/regulation  \n9. https://baike.baidu.com/item/Regulate/20808501  \n\n*注：以上来源均为历史重复的词典/百科条目，未包含具体法规文件。*  \n\n---  \n\n如后续出现新法规或标准更新，请及时补充至次日日报。祝工作顺利！",
+      "author_id": 1775137111645,
+      "is_pinned": 0,
+      "post_type": "share",
+      "module": "tire",
+      "tags": [
+        "AI日报",
+        "国际法规",
+        "热点汇总"
+      ],
+      "metadata": {
+        "regulation_sources": [
+          {
+            "title": "REGULATION 中文 (简体)翻译：剑桥词典 - Cambridge Dictionary",
+            "link": "https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD-%E6%B1%89%E8%AF%AD-%E7%AE%80%E4%BD%93/regulation",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://dictionary.cambridge.org/zhs/%e8%af%8d%e5%85%b8/%e8%8b%b1%e8%af%ad-%e6%b1%89%e8%af%ad-%e7%ae%80%e4%bd%93/regulation",
+            "normalized_title": "regulation 中文 简体 翻译 剑桥词典 cambridge dictionary",
+            "content_fingerprint": "regulation 中文 简体 翻译 剑桥词典 cambridge dictionary"
+          },
+          {
+            "title": "regulation _百度百科",
+            "link": "https://baike.baidu.com/item/regulation/1850332",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://baike.baidu.com/item/regulation/1850332",
+            "normalized_title": "regulation 百度百科",
+            "content_fingerprint": "regulation 百度百科"
+          },
+          {
+            "title": "regulation 是什么意思_ regulation 的翻译_音标_读音_用法_例句 ...",
+            "link": "https://www.iciba.com/word?w=regulation",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://www.iciba.com/word?w=regulation",
+            "normalized_title": "regulation 是什么意思 regulation 的翻译 音标 读音 用法 例句",
+            "content_fingerprint": "regulation 是什么意思 regulation 的翻译 音标 读音 用法 例句"
+          },
+          {
+            "title": "欧路词典|英汉-汉英词典 regulation 是什么意思_ regulation 的 ...",
+            "link": "https://dict.eudic.net/dicts/en/regulation",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://dict.eudic.net/dicts/en/regulation",
+            "normalized_title": "欧路词典 英汉 汉英词典 regulation 是什么意思 regulation 的",
+            "content_fingerprint": "欧路词典 英汉 汉英词典 regulation 是什么意思 regulation 的"
+          },
+          {
+            "title": "Regulations是什么意思_ Regulations的翻译_音标_读音_用法 ...",
+            "link": "https://www.iciba.com/word?w=+Regulations",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://www.iciba.com/word?w=+regulations",
+            "normalized_title": "regulations是什么意思 regulations的翻译 音标 读音 用法",
+            "content_fingerprint": "regulations是什么意思 regulations的翻译 音标 读音 用法"
+          },
+          {
+            "title": "regulation 是什么意思_ regulation 怎么读_ regulation 翻译_用法 ...",
+            "link": "https://koolearn.com/dict/wd_124177.html",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://koolearn.com/dict/wd_124177.html",
+            "normalized_title": "regulation 是什么意思 regulation 怎么读 regulation 翻译 用法",
+            "content_fingerprint": "regulation 是什么意思 regulation 怎么读 regulation 翻译 用法"
+          },
+          {
+            "title": "BBC英语学习：rule和 regulation 的区别 - 知乎",
+            "link": "https://zhuanlan.zhihu.com/p/28668438986",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://zhuanlan.zhihu.com/p/28668438986",
+            "normalized_title": "bbc英语学习 rule和 regulation 的区别 知乎",
+            "content_fingerprint": "bbc英语学习 rule和 regulation 的区别 知乎"
+          },
+          {
+            "title": "REGULATION 在剑桥英语词典中的解释及翻译 - Cambridge Dictionary",
+            "link": "https://dictionary.cambridge.org/zhs/%E8%AF%8D%E5%85%B8/%E8%8B%B1%E8%AF%AD/regulation",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://dictionary.cambridge.org/zhs/%e8%af%8d%e5%85%b8/%e8%8b%b1%e8%af%ad/regulation",
+            "normalized_title": "regulation 在剑桥英语词典中的解释及翻译 cambridge dictionary",
+            "content_fingerprint": "regulation 在剑桥英语词典中的解释及翻译 cambridge dictionary"
+          },
+          {
+            "title": "Regulate （英语单词）_百度百科",
+            "link": "https://baike.baidu.com/item/Regulate/20808501",
+            "description": "",
+            "pubDate": "",
+            "status": "duplicate",
+            "statusLabel": "历史重复",
+            "normalized_link": "https://baike.baidu.com/item/regulate/20808501",
+            "normalized_title": "regulate 英语单词 百度百科",
+            "content_fingerprint": "regulate 英语单词 百度百科"
+          }
+        ],
+        "regulation_source_counts": {
+          "new": 0,
+          "updated": 0,
+          "duplicate": 9,
+          "legacy_duplicate": 0
+        },
+        "used_fallback_duplicates": true
+      },
+      "created_at": "2026-07-27T14:00:20.609Z",
+      "updated_at": "2026-07-27T14:00:20.609Z"
     }
   ],
   "replies": [
@@ -4053,13 +4181,31 @@
       "updated_at": "2026-07-21T09:24:54.964Z"
     },
     {
-      "id": 1785076760464,
-      "topic_id": 1785076238082,
-      "content": "轮胎测试主要分为主观和客观。\r\n主观：干地操控性，湿地操控性，舒适性\r\n客观：所有使用设备测到的具体数值的都属于客观测试，例如制动，磨耗，跑偏，室内试验等等",
+      "id": 1785147514968,
+      "topic_id": 1785075776870,
+      "content": "**回复：关于轮胎 W‑C 选胎原则及常见问题的整理**  \n\n---\n\n### 1. 选胎基本原则（W‑C）  \n| 项目 | 选胎条件 | 备注 |\n|------|----------|------|\n| **噪声** | 断面宽 = 最大 + 最小；扁平比 = 最大；轮辋直径 = 最大 | 三者必须同时满足 |\n| **湿地** | 断面宽 = 最小；扁平比 = 最大；轮辋直径 = 最小 | 三者必须同时满足 |\n| **测试阈值** | 若任意胎的测试结果 **≥10 %**，即可视为满足要求；若 **>限值但 <10 %**，则需挑选两端胎再测试。 |\n| **两端胎的挑选顺序** | a. 最小断面宽 → 最小断面宽+最大扁平比 → …<br> b. 最大断面宽 → 最大断面宽+最小扁平比 → … | 视具体需求而定。 |\n\n---\n\n### 2. 磨耗胎（C1）最坏情况（W‑C）选择  \n- **原则**：在同一规格列表中，**选最宽的胎**，并 **把限值加 0.05**（即在原限值基础上提升 5 %）。  \n- **例外**：如果列表中只有一种尺寸，则 **不需要** 加 0.05。  \n\n> **C2、C3** 两种胎型 **不需要** 采用 W‑C 选胎原则。  \n\n---\n\n### 3. 滚阻（Rolling Resistance）  \n\n| 版本 | 选胎要求 | 限值计算方式 | 备注 |\n|------|----------|--------------|------|\n| **非 04 版** | 最小负荷指数 + 标准（非加强）胎 | 限值 = (117 中的限值 - 0.3 N/Kn) - 0.06 × (测试胎负荷指数 - 最小负荷指数) | 需在报告中体现新增数据。 |\n| **04 版** | **C1（normal / snow）** 必须使用最坏情况（W‑C）方式，**不能**直接套用上式。<br> **UHP**：扁平比 ≤ 40 且车速 ≥ 300。 | 同 04 版的限值计算方式（见下文），但 **UHP** 需满足扁平比/车速限制。 | 如需使用公式，仍需在报告中注明对应的负荷指数与最小负荷指数。 |\n\n**UHP 与 EMT 选胎顺位**（原则）  \n1. 首选 **UHP** 胎，且拥有 **最小负荷指数**。  \n2. 再选 **EMT** 胎，且拥有 **最小负荷指数**。  \n3. 非 UHP/EMT 时，选 **标准胎**（不选加强胎），若选加强胎则 **限值需再加 0.4** 后重新判断。  \n\n**特殊情况（LI ≥ 87，非 UHP）**  \n- 若最坏情况的滚阻限值 **> 9 N/kN**，则需要 **额外再选一个 LI ≥ 87 的胎** 进行第二次 RR 测试（共 2 份报告），确保满足 ≤ 9 N/kN。  \n\n**举例**（供参考）  \n- 205/40ZR17 84Y（UHP） → 首选，若测试结果 ≤ 9 N/kN 则通过；若在 9‑10 N/kN 之间，需再选 205/55ZR16 91V 进行第二次测试，两份报告均放入最终报告。  \n\n---\n\n### 4. 雪地 / 冰地选胎  \n\n| 环境 | 选胎要点 | 计算公式（如适用） |\n|------|----------|-------------------|\n| **雪地** | 采用 **最宽断面宽**；可使用 **C1 + C2 减速法**、**旋转牵引法**、**C3 加速法** 等组合。<br> 示例：C1 = 1.07 + 0.03 = 1.10；C2 = 1.02 + 0.03 = 1.05；旋转牵引法 = 1.10 + 0.05 = 1.15。 | 具体公式已在原帖中给出，需根据所用法（减速/旋转/加速）选取相应数值。 |\n| **冰地** | **最小断面宽** 为基准；其他胎宽需按公式调整。<br> 限值 = (R117 中的限值 + 0.07) + 0.002 × (选择的断面宽 - 最小断面宽) | 直接套用公式即可。 |\n| **R164（镶钉胎）** | 选胎原则与 **雪地 C1** 完全一致。 | — |\n\n---\n\n### 5. RDW 申请流程的关键注意事项（摘要）  \n\n1. **双用途证书** – 只能 **延伸**（在仍满足两种用途前提下）。  \n2. **1958 协议** – 允许申请旧版证书，原则上仅针对 **系统安装证书**，若涉及零部件需单独处理并加费。  \n3. **未列入 ETRTO 及 R30/R54/R75/R106 附录 5 的规格** – 必须转换为 **公制规格** 为主标，图纸与胎侧打刻均以公制为准，尺寸可在 **remark** 中注明英制。  \n4. **标签法报告用于申请 R117** – 需满足：  \n   - 滚阻报告必须包含明确信息并 **未对标值** 作为 R117 结果；  \n   - 湿地测试需考虑 **0.03** 余量；  \n   - 冰地测试（R117.02 suppl.14 前后均可）可用于申请。  \n5. **重要参数修改** – 只能 **申请新证书**。  \n6. **结构更改（层数、组成等）** – 必须 **延伸**，并提供 **复合性声明**（通常通过测试即可）。  \n7. **图纸与实物对应** – 必须保证图纸与实物尺寸一致。  \n8. **测试报告** – 尽量体现 **样胎的 data code**。  \n9. **117 中 Tyre Size List 要求** – 需满足列表规范（已在原帖提及）。  \n10. **R117 花纹微小变化** – 需注意花纹细节的合规性。  \n11. **Extension / Correction / Revision** – 对应的技术文件与测试要求已在原帖列出。  \n12. **R75（All‑Terrain Vehicles）** – 对应的适用性与试验要求需另行核实。  \n13. **R30 / R54 / R75 / R106 图纸尺寸** – 图纸中的尺寸为 **设计值/计算值**，而 **application form** 中的数值为 **实际测试值**。  \n14. **速度级别** – 必须满足 **法规要求**（无论是 nominal 还是 additional 的速度级）。  \n\n> **温馨提示**：上述要点均基于已有帖子内容，若有最新法规或细节变动，请以官方发布的《R117》或相关技术规范为准。如对某一条款的适用范围仍有疑问，建议直接查阅原文或联系相关技术委员会进行确认。  \n\n---  \n\n希望以上整理能帮助大家在实际选胎、滚阻测试以及 RDW 申请时更清晰地把握关键要点。如有进一步的细节需要确认，欢迎继续交流！",
+      "author_id": 1775137111645,
+      "parent_id": null,
+      "created_at": "2026-07-27T10:18:34.968Z",
+      "updated_at": "2026-07-27T10:18:34.968Z"
+    },
+    {
+      "id": 1785158325248,
+      "topic_id": 1785148200256,
+      "content": "轮胎测试一般分为主观测试和客观测试两部分\r\n主观测试：干地操控，湿地操控，舒适性\r\n客观测试：制动测试，轮胎NVH测试，水漂，室内，等等。。。  具体看图片",
       "author_id": 1783743113152,
       "parent_id": null,
-      "created_at": "2026-07-26T14:39:20.464Z",
-      "updated_at": "2026-07-26T14:39:20.464Z"
+      "created_at": "2026-07-27T13:18:45.248Z",
+      "updated_at": "2026-07-27T13:18:45.248Z"
+    },
+    {
+      "id": 1785170451364,
+      "topic_id": 1785075776870,
+      "content": "### 新回复：\n\n#### 回复法规条款解读与应用关键注意事项  \n针对帖主需求，此回复聚焦核心法规条款、适用场景与注意事项，旨在清晰、结构化呈现：  \n\n---\n\n### **一、选胎原则（W-C）应用场景与限制**  \n1. **W-C 选择适用性**  \n   - **滚阻测试要求**（R117.02-2022）：仅 **C1胎** 需强制应用 W-C 原则，C2/C3胎可直接使用测试值。  \n   - **KTR（测试阈值）**：≥10%，无需额外操作；若在 **>限值但 <10%** 间隔，需选取 **两端胎** 重新测试（顺序优先级：标准胎→EPC优质胎）。  \n\n2. **04 版 R117 限值计算验证**  \n   - **霁改不超过 0.06**：04 版最高要求 117 表“标准胎”测试值于117条目“+0.06”内，GTR不超过最小负荷指数 GTR+0.325。  \n   - **UHP 与 EMT 特殊约束**：  \n     - UHP 六级胎：扁平比≤40且测试速度≥306公里，需满足有效性标记（如**84Y**）。  \n     - EMT胎选择时需优先“最小负荷指数且扁平比≥40”的胎型，三级以下胎无需额外测试。  \n\n---\n\n### **二、极端场景处理与文件规范**  \n1. **高滚阻胎处理流程**  \n   - 若最坏情况滚阻限值 **>9 N/kN**（第五分组），需组织 **最小负荷指数胎（LI≥87）重新测试**，确保数据合规性并添加另一份测试报告。  \n\n2. **双用途证书的延伸规则**  \n   - **1958 协议延伸证书**：仅针对 **系统安装**（胎+车辆集成），零部件需单独申请并加收费用（如TÜV 4102）。  \n   - **R75（越野车）文件差异**：  \n     - 图纸尺寸为设计值，申请表需填对实测数据（如胎宽）。  \n\n---\n\n### **三、技术实践优化建议**  \n1. **实物-图纸对照规范**  \n   - 所有尺寸以 **公制为主**（ETRTO标准），图纸缺口/尺寸需与标准化模板一致，标注原始数据（如车长）。\n\n2. **测试报告标注规范**  \n   - 每份测试报告需标注 **Data Code（胎侧数字）** 和 **Y25** 编号，确保可追溯性。  \n\n3. **证书修改申请原则**  \n   - **参数修改**需申请新证书，仅 **延伸/纠正** 可依法延续原证书（如材料批准）。  \n\n---\n\n### **注意事项提醒**  \n- **法规更新**：建议持续关注 **德国联邦交通运输部** 或 TÜV 官方公告，尤其 04 版 R117 细则易产生变动。  \n- **验证差异**：若标注数值与测试结果不一致，需补充说明（如编辑错误或实物变更）。  \n- **单位一致性**：申请表中单位需统一为 **国际单位系统（SI）**，除标注原始数据（如英尺）时注明。  \n\n---  \n**温馨提示**：以上解读基于已公布 R117-04 版及 ECE 规章，特殊定制胎规格建议通过 **TÜV Rheinland 技术咨询团队** 进一步确认执行细节。",
+      "author_id": 1775137111645,
+      "parent_id": null,
+      "created_at": "2026-07-27T16:40:51.364Z",
+      "updated_at": "2026-07-27T16:40:51.364Z"
     }
   ],
   "likes": [
@@ -4190,18 +4336,18 @@
       "created_at": "2026-03-01T13:51:24.163Z"
     },
     {
-      "id": 17850767604640,
-      "topic_id": 1785076238082,
-      "reply_id": 1785076760464,
-      "image_path": "1785076760441-158085398.png",
-      "created_at": "2026-07-26T14:39:20.464Z"
+      "id": 17851583252480,
+      "topic_id": 1785148200256,
+      "reply_id": 1785158325248,
+      "image_path": "1785158325225-888997863.png",
+      "created_at": "2026-07-27T13:18:45.248Z"
     },
     {
-      "id": 17850767604641,
-      "topic_id": 1785076238082,
-      "reply_id": 1785076760464,
-      "image_path": "1785076760445-396270841.png",
-      "created_at": "2026-07-26T14:39:20.464Z"
+      "id": 17851583252481,
+      "topic_id": 1785148200256,
+      "reply_id": 1785158325248,
+      "image_path": "1785158325228-774610978.png",
+      "created_at": "2026-07-27T13:18:45.248Z"
     }
   ],
   "notifications": [
@@ -19334,7 +19480,7 @@
       "topic_id": 1785075776870,
       "reply_id": null,
       "actor_id": 1783743113152,
-      "read": false,
+      "read": true,
       "created_at": "2026-07-26T14:22:56.870Z"
     },
     {
@@ -19686,364 +19832,760 @@
       "created_at": "2026-07-26T14:22:56.870Z"
     },
     {
-      "id": 1785076238504,
+      "id": 1785147515715,
+      "user_id": 1783743113152,
+      "type": "reply",
+      "title": "有新的回复提醒",
+      "content": "AI法规助手 回复了帖子：《轮胎 Worst case 选择原则及常见的问题点》",
+      "topic_id": 1785075776870,
+      "reply_id": 1785147514968,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T10:18:34.968Z"
+    },
+    {
+      "id": 1785148200926,
       "user_id": 1,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238567,
+      "id": 1785148200683,
       "user_id": 1772343659112,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238545,
+      "id": 1785148200825,
       "user_id": 1772350424091,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238629,
+      "id": 1785148200695,
       "user_id": 1783743113133,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238435,
+      "id": 1785148201156,
       "user_id": 1783743113134,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238435,
+      "id": 1785148200743,
       "user_id": 1783743113135,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238173,
+      "id": 1785148200351,
       "user_id": 1783743113136,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238235,
+      "id": 1785148200764,
       "user_id": 1783743113137,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238894,
+      "id": 1785148200892,
       "user_id": 1783743113138,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238405,
+      "id": 1785148200949,
       "user_id": 1783743113139,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238983,
+      "id": 1785148200940,
       "user_id": 1783743113140,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238529,
+      "id": 1785148200828,
       "user_id": 1783743113141,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076239045,
+      "id": 1785148201120,
       "user_id": 1783743113142,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238898,
+      "id": 1785148200323,
       "user_id": 1783743113143,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238806,
+      "id": 1785148201232,
       "user_id": 1783743113144,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238177,
+      "id": 1785148200962,
       "user_id": 1783743113145,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238614,
+      "id": 1785148200532,
       "user_id": 1783743113146,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238948,
+      "id": 1785148201059,
       "user_id": 1783743113147,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238737,
+      "id": 1785148200652,
       "user_id": 1783743113148,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238760,
+      "id": 1785148200929,
       "user_id": 1783743113149,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.082Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238692,
+      "id": 1785148200321,
       "user_id": 1783743113150,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238452,
+      "id": 1785148200871,
       "user_id": 1783743113151,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238314,
+      "id": 1785148201121,
       "user_id": 1783743113153,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238492,
+      "id": 1785148201039,
       "user_id": 1783743113154,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076239061,
+      "id": 1785148200313,
       "user_id": 1783743113155,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238588,
+      "id": 1785148200678,
       "user_id": 1783743113156,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238430,
+      "id": 1785148200670,
       "user_id": 1783743113157,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238922,
+      "id": 1785148200958,
       "user_id": 1783743113158,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238872,
+      "id": 1785148201016,
       "user_id": 1783743113159,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
     },
     {
-      "id": 1785076238633,
+      "id": 1785148201183,
       "user_id": 1783926249728,
       "type": "new_topic",
       "title": "有新帖子发布",
       "content": "Pengcheng Yang 发布了新帖子：《莱茵目前能进行那些轮胎相关测试》",
-      "topic_id": 1785076238082,
+      "topic_id": 1785148200256,
       "reply_id": null,
       "actor_id": 1783743113152,
       "read": false,
-      "created_at": "2026-07-26T14:30:38.083Z"
+      "created_at": "2026-07-27T10:30:00.257Z"
+    },
+    {
+      "id": 1785160821472,
+      "user_id": 1,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820772,
+      "user_id": 1772343659112,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821344,
+      "user_id": 1772350424091,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820697,
+      "user_id": 1783743113133,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821466,
+      "user_id": 1783743113134,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821099,
+      "user_id": 1783743113135,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820718,
+      "user_id": 1783743113136,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821214,
+      "user_id": 1783743113137,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820816,
+      "user_id": 1783743113138,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820837,
+      "user_id": 1783743113139,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821034,
+      "user_id": 1783743113140,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820701,
+      "user_id": 1783743113141,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821042,
+      "user_id": 1783743113142,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821484,
+      "user_id": 1783743113143,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821104,
+      "user_id": 1783743113144,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821043,
+      "user_id": 1783743113145,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820637,
+      "user_id": 1783743113146,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821227,
+      "user_id": 1783743113147,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820687,
+      "user_id": 1783743113148,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821454,
+      "user_id": 1783743113149,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820676,
+      "user_id": 1783743113150,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821588,
+      "user_id": 1783743113151,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821342,
+      "user_id": 1783743113152,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821124,
+      "user_id": 1783743113153,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820681,
+      "user_id": 1783743113154,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821436,
+      "user_id": 1783743113155,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821388,
+      "user_id": 1783743113156,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820756,
+      "user_id": 1783743113157,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820738,
+      "user_id": 1783743113158,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160821243,
+      "user_id": 1783743113159,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785160820935,
+      "user_id": 1783926249728,
+      "type": "new_topic",
+      "title": "有新帖子发布",
+      "content": "AI法规助手 发布了新帖子：《【AI日报】2026-07-27 国际法规热点汇总》",
+      "topic_id": 1785160820608,
+      "reply_id": null,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T14:00:20.609Z"
+    },
+    {
+      "id": 1785170452360,
+      "user_id": 1783743113152,
+      "type": "reply",
+      "title": "有新的回复提醒",
+      "content": "AI法规助手 回复了帖子：《轮胎 Worst case 选择原则及常见的问题点》",
+      "topic_id": 1785075776870,
+      "reply_id": 1785170451364,
+      "actor_id": 1775137111645,
+      "read": false,
+      "created_at": "2026-07-27T16:40:51.364Z"
     }
   ],
   "appSettings": {

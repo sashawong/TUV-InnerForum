@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Badge, Button, Card, Empty, Form, Input, List, message, Modal, Select, Space, Tag, Typography, Upload } from 'antd'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Badge, Button, Card, Empty, Form, Input, List, message, Modal, Select, Space, Spin, Tag, Typography, Upload } from 'antd'
 import { SearchOutlined, UploadOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import api from '../utils/api'
@@ -75,6 +75,21 @@ interface SearchResults {
   replies: SearchReplyResult[]
 }
 
+interface TopicPagination {
+  page: number
+  limit: number
+  total: number
+  total_pages: number
+  has_more: boolean
+}
+
+interface PaginatedTopicsResponse {
+  items: Topic[]
+  pagination: TopicPagination
+}
+
+const TOPICS_PAGE_SIZE = 12
+
 const columnCardStyle: React.CSSProperties = {
   height: '100%',
 }
@@ -95,6 +110,10 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
   const moduleConfig = moduleConfigs[moduleKey]
   const [topics, setTopics] = useState<Topic[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+  const [totalTopics, setTotalTopics] = useState(0)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
@@ -109,26 +128,77 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
   const [uploadedImages, setUploadedImages] = useState<any[]>([])
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([])
   const [form] = Form.useForm()
+  const loadMoreRef = useRef<HTMLDivElement | null>(null)
+  const loadingPagesRef = useRef(new Set<string>())
+  const activeModuleRef = useRef(moduleKey)
+
+  activeModuleRef.current = moduleKey
+
+  const fetchTopics = useCallback(
+    async (pageNumber: number, replace = false) => {
+      const requestKey = `${moduleKey}:${pageNumber}`
+      if (loadingPagesRef.current.has(requestKey)) return
+
+      loadingPagesRef.current.add(requestKey)
+      replace ? setLoading(true) : setLoadingMore(true)
+
+      try {
+        const response = await api.get<PaginatedTopicsResponse>('/topics', {
+          params: { module: moduleKey, page: pageNumber, limit: TOPICS_PAGE_SIZE },
+        })
+
+        if (activeModuleRef.current !== moduleKey) return
+
+        const { items, pagination } = response.data
+        setTopics((previous) => {
+          if (replace) return items
+
+          const existingIds = new Set(previous.map((topic) => topic.id))
+          return [...previous, ...items.filter((topic) => !existingIds.has(topic.id))]
+        })
+        setCurrentPage(pagination.page)
+        setHasMore(pagination.has_more)
+        setTotalTopics(pagination.total)
+      } catch (error) {
+        message.error('获取帖子失败')
+      } finally {
+        loadingPagesRef.current.delete(requestKey)
+        if (activeModuleRef.current === moduleKey) {
+          replace ? setLoading(false) : setLoadingMore(false)
+        }
+      }
+    },
+    [moduleKey]
+  )
 
   useEffect(() => {
-    fetchTopics()
+    setTopics([])
+    setCurrentPage(0)
+    setHasMore(true)
+    setTotalTopics(0)
+    fetchTopics(1, true)
 
     const handleCreateTopic = () => setIsModalOpen(true)
     window.addEventListener('createTopic', handleCreateTopic)
     return () => window.removeEventListener('createTopic', handleCreateTopic)
-  }, [moduleKey])
+  }, [fetchTopics])
 
-  const fetchTopics = async () => {
-    setLoading(true)
-    try {
-      const response = await api.get('/topics', { params: { module: moduleKey } })
-      setTopics(response.data)
-    } catch (error) {
-      message.error('获取帖子失败')
-    } finally {
-      setLoading(false)
-    }
-  }
+  useEffect(() => {
+    const target = loadMoreRef.current
+    if (!target || loading || loadingMore || !hasMore || currentPage === 0) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          fetchTopics(currentPage + 1)
+        }
+      },
+      { rootMargin: '320px 0px' }
+    )
+
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [currentPage, fetchTopics, hasMore, loading, loadingMore, topics.length])
 
   const handleSearch = async (query: string) => {
     const trimmed = query.trim()
@@ -182,7 +252,7 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
       form.resetFields()
       setUploadedImages([])
       setUploadedFiles([])
-      fetchTopics()
+      fetchTopics(1, true)
     } catch (error: any) {
       message.error(error.response?.data?.error || '发布帖子失败')
     } finally {
@@ -271,7 +341,9 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {moduleConfig.title}
         </Typography.Title>
-        <Typography.Text type="secondary">{moduleConfig.description}</Typography.Text>
+        <Typography.Text type="secondary">
+          {moduleConfig.description} · 共 {totalTopics} 条
+        </Typography.Text>
       </Card>
 
       {topics.length === 0 ? (
@@ -304,6 +376,22 @@ const Home: React.FC<HomeProps> = ({ moduleKey = 'tire' }) => {
           </Card>
         </div>
       )}
+
+      <div
+        ref={loadMoreRef}
+        style={{ minHeight: 56, display: 'grid', placeItems: 'center', marginTop: 16 }}
+        aria-live="polite"
+      >
+        {loadingMore && (
+          <Space>
+            <Spin size="small" />
+            <Typography.Text type="secondary">正在加载更多帖子...</Typography.Text>
+          </Space>
+        )}
+        {!loading && !loadingMore && !hasMore && topics.length > 0 && (
+          <Typography.Text type="secondary">已加载全部 {totalTopics} 条帖子</Typography.Text>
+        )}
+      </div>
 
       <Modal
         title={

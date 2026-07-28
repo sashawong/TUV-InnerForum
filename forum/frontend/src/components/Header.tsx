@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import { BellOutlined, LoginOutlined, PlusOutlined, SearchOutlined, TrophyOutlined, UserOutlined } from '@ant-design/icons'
-import { Badge, Button, Dropdown, Input, List, Space, Typography } from 'antd'
+import {
+  BellOutlined,
+  LoginOutlined,
+  MessageOutlined,
+  PlusOutlined,
+  SearchOutlined,
+  TrophyOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
+import { Badge, Button, Dropdown, Empty, Input, List, Space, theme, Typography } from 'antd'
+import type { MenuProps } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import api from '../utils/api'
@@ -30,6 +39,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const navigate = useNavigate()
   const { user, logout } = useAuthStore()
+  const { token } = theme.useToken()
   const [searchQuery, setSearchQuery] = useState(searchValue)
   const [isMobile, setIsMobile] = useState(false)
   const [notifications, setNotifications] = useState<NotificationItem[]>([])
@@ -74,30 +84,57 @@ const Header: React.FC<HeaderProps> = ({
     }
   }, [user?.id])
 
-  const userMenuItems = [
+  const userMenuItems: MenuProps['items'] = [
     {
       key: 'profile',
-      label: <span onClick={() => navigate('/user/settings')}>个人中心</span>,
+      label: '个人中心',
+    },
+    {
+      key: 'messages',
+      icon: <MessageOutlined />,
+      label: '消息回复',
     },
     {
       key: 'ai',
-      label: <span onClick={() => navigate('/ai-assistant')}>AI助手</span>,
+      label: 'AI助手',
     },
     {
       key: 'leaderboard',
-      label: <span onClick={() => navigate('/leaderboard')}>积分排行榜</span>,
+      label: '积分排行榜',
     },
     {
       key: 'logout',
-      label: <span onClick={logout}>退出登录</span>,
+      danger: true,
+      label: '退出登录',
     },
   ]
+
+  const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
+    const routes: Record<string, string> = {
+      profile: '/user/settings',
+      messages: '/user/messages',
+      ai: '/ai-assistant',
+      leaderboard: '/leaderboard',
+    }
+
+    if (key === 'logout') {
+      logout()
+      navigate('/login')
+      return
+    }
+
+    if (routes[key]) {
+      navigate(routes[key])
+    }
+  }
 
   const handleSearch = () => {
     onSearch?.(searchQuery.trim())
   }
 
   const handleReadNotifications = async (targetTopicId?: number | null, notificationId?: number) => {
+    const notification = notifications.find((item) => item.id === notificationId)
+
     try {
       if (notificationId) {
         await api.post('/notifications/read', { id: notificationId })
@@ -108,7 +145,9 @@ const Header: React.FC<HeaderProps> = ({
 
     if (notificationId) {
       setNotifications((prev) => prev.map((item) => (item.id === notificationId ? { ...item, read: true } : item)))
-      setUnreadCount((prev) => Math.max(0, prev - 1))
+      if (notification && !notification.read) {
+        setUnreadCount((prev) => Math.max(0, prev - 1))
+      }
     }
 
     if (targetTopicId) {
@@ -116,49 +155,88 @@ const Header: React.FC<HeaderProps> = ({
     }
   }
 
-  const notificationMenuItems = [
-    {
-      key: 'header',
-      label: (
-        <div style={{ minWidth: 320, maxWidth: 360 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <Typography.Text strong>新帖与回复提醒</Typography.Text>
-            <Button
-              type="link"
-              size="small"
-              onClick={async () => {
-                await api.post('/notifications/read', { all: true })
-                setNotifications((prev) => prev.map((item) => ({ ...item, read: true })))
-                setUnreadCount(0)
+  const handleReadAllNotifications = async () => {
+    try {
+      await api.post('/notifications/read', { all: true })
+      setNotifications((prev) => prev.map((item) => ({ ...item, read: true })))
+      setUnreadCount(0)
+    } catch (error) {
+      // Keep the current state when the request fails.
+    }
+  }
+
+  const notificationPanel = (
+    <div
+      style={{
+        width: 'min(380px, calc(100vw - 32px))',
+        overflow: 'hidden',
+        border: `1px solid ${token.colorBorderSecondary}`,
+        borderRadius: token.borderRadiusLG,
+        background: token.colorBgElevated,
+        boxShadow: token.boxShadowSecondary,
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          padding: '14px 16px 10px',
+          borderBottom: `1px solid ${token.colorBorderSecondary}`,
+        }}
+      >
+        <div>
+          <Typography.Text strong style={{ display: 'block' }}>
+            消息提醒
+          </Typography.Text>
+          <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+            新帖、回复与互动动态
+          </Typography.Text>
+        </div>
+        <Button type="link" size="small" disabled={unreadCount === 0} onClick={handleReadAllNotifications}>
+          全部已读
+        </Button>
+      </div>
+
+      <div style={{ maxHeight: 360, overflowY: 'auto', padding: '0 16px' }}>
+        <List
+          size="small"
+          locale={{ emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暂无消息提醒" /> }}
+          dataSource={notifications}
+          renderItem={(item) => (
+            <List.Item
+              style={{
+                cursor: item.topic_id ? 'pointer' : 'default',
+                padding: '12px 0',
+                opacity: item.read ? 0.72 : 1,
               }}
+              onClick={() => handleReadNotifications(item.topic_id, item.id)}
             >
-              全部已读
-            </Button>
-          </div>
-          <List
-            size="small"
-            locale={{ emptyText: '暂无提醒' }}
-            dataSource={notifications}
-            renderItem={(item) => (
-              <List.Item
-                style={{ cursor: item.topic_id ? 'pointer' : 'default', paddingInline: 0 }}
-                onClick={() => handleReadNotifications(item.topic_id, item.id)}
-              >
-                <Space direction="vertical" size={2} style={{ width: '100%' }}>
+              <Space align="start" size={10} style={{ width: '100%' }}>
+                <Badge status={item.read ? 'default' : 'processing'} style={{ marginTop: 7 }} />
+                <Space direction="vertical" size={2} style={{ minWidth: 0, width: '100%' }}>
                   <Typography.Text strong={!item.read}>{item.title}</Typography.Text>
-                  <Typography.Text type="secondary">{item.content}</Typography.Text>
-                  <Typography.Text type="secondary">
+                  <Typography.Paragraph type="secondary" ellipsis={{ rows: 2 }} style={{ margin: 0 }}>
+                    {item.content}
+                  </Typography.Paragraph>
+                  <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                     {new Date(item.created_at).toLocaleString('zh-CN')}
                   </Typography.Text>
                 </Space>
-              </List.Item>
-            )}
-          />
-        </div>
-      ),
-      disabled: true,
-    },
-  ]
+              </Space>
+            </List.Item>
+          )}
+        />
+      </div>
+
+      <div style={{ padding: 12, borderTop: `1px solid ${token.colorBorderSecondary}` }}>
+        <Button type="primary" ghost block icon={<MessageOutlined />} onClick={() => navigate('/user/messages')}>
+          进入消息回复
+        </Button>
+      </div>
+    </div>
+  )
 
   return (
     <div
@@ -196,9 +274,15 @@ const Header: React.FC<HeaderProps> = ({
 
         {user ? (
           <>
-            <Dropdown menu={{ items: notificationMenuItems }} placement="bottomRight" trigger={['click']}>
+            <Dropdown
+              menu={{ items: [] }}
+              dropdownRender={() => notificationPanel}
+              placement="bottomRight"
+              trigger={['click']}
+              arrow
+            >
               <Badge count={unreadCount} size="small">
-                <Button icon={<BellOutlined />} />
+                <Button icon={<BellOutlined />}>消息</Button>
               </Badge>
             </Dropdown>
             <Button icon={<TrophyOutlined />} onClick={() => navigate('/leaderboard')}>
@@ -209,7 +293,7 @@ const Header: React.FC<HeaderProps> = ({
                 新建帖子
               </Button>
             )}
-            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+            <Dropdown menu={{ items: userMenuItems, onClick: handleUserMenuClick }} placement="bottomRight">
               <Button icon={<UserOutlined />}>{user.username}</Button>
             </Dropdown>
           </>
