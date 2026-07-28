@@ -56,9 +56,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile = false }) => {
       label: t('home'),
     },
     {
+      key: '/vehicle',
+      icon: <CarOutlined />,
+      label: '车辆法规',
+    },
+    {
       key: '/forum',
       icon: <SafetyCertificateOutlined />,
       label: '轮胎法规',
+    },
+    {
+      key: '/lighting',
+      icon: <BulbOutlined />,
+      label: '灯具法规',
     },
     {
       key: '/leaderboard',
@@ -69,16 +79,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobile = false }) => {
       key: '/video-column',
       icon: <VideoCameraOutlined />,
       label: '视频专栏',
-    },
-    {
-      key: '/lighting',
-      icon: <BulbOutlined />,
-      label: '灯具',
-    },
-    {
-      key: '/vehicle',
-      icon: <CarOutlined />,
-      label: '整车',
     },
     {
       key: 'user',
