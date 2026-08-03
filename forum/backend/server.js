@@ -73,8 +73,15 @@ const upload = multer({
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 const AI_ASSISTANT_USERNAME = 'AI法规助手';
 const SHANGHAI_OFFSET_MS = 8 * 60 * 60 * 1000;
+const REGULATION_NEWS_HOSTS = Object.freeze([
+  'eur-lex.europa.eu',
+  'iso.org',
+  'unece.org',
+  'tyreseurope.org',
+  'type-approval.rdw.nl'
+]);
 const INTERNATIONAL_REGULATION_NEWS_QUERY =
-  '(site:eur-lex.europa.eu OR site:iso.org OR site:unece.org OR site:tyreseurope.org OR site:type-approval.rdw.nl) REGULATION tyre vehicle UNECE EU ISO type approval';
+  `(${REGULATION_NEWS_HOSTS.map((host) => `site:${host}`).join(' OR ')}) REGULATION tyre vehicle UNECE EU ISO type approval`;
 const TOPIC_MODULES = new Set(['tire', 'lighting', 'vehicle']);
 
 const authenticateToken = (req, res, next) => {
@@ -695,6 +702,48 @@ const decodeXmlEntities = (text = '') =>
 
 const stripHtml = (text = '') => decodeXmlEntities(text).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
+const resolveBingResultUrl = (url = '') => {
+  const decodedUrl = decodeXmlEntities(String(url || '')).trim();
+
+  try {
+    const parsed = new URL(decodedUrl);
+    const hostname = parsed.hostname.toLowerCase();
+    const encodedTarget =
+      (hostname === 'bing.com' || hostname.endsWith('.bing.com')) && parsed.pathname === '/ck/a'
+        ? parsed.searchParams.get('u')
+        : '';
+
+    if (encodedTarget?.startsWith('a1')) {
+      const targetUrl = Buffer.from(encodedTarget.slice(2), 'base64').toString('utf8').trim();
+      if (/^https?:\/\//i.test(targetUrl)) {
+        return targetUrl;
+      }
+    }
+
+    return decodedUrl;
+  } catch (error) {
+    return decodedUrl;
+  }
+};
+
+const getRegulationNewsHostname = (url = '') => {
+  try {
+    const parsed = new URL(url);
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      return '';
+    }
+
+    return parsed.hostname.toLowerCase().replace(/\.$/, '').replace(/^www\./, '');
+  } catch (error) {
+    return '';
+  }
+};
+
+const isAllowedRegulationNewsUrl = (url = '') => {
+  const hostname = getRegulationNewsHostname(url);
+  return REGULATION_NEWS_HOSTS.some((allowedHost) => hostname === allowedHost || hostname.endsWith(`.${allowedHost}`));
+};
+
 const normalizeNewsUrl = (url = '') => {
   try {
     const parsed = new URL(url);
@@ -897,7 +946,9 @@ const fetchInternationalRegulationNews = async () => {
 
   const htmlText = await response.text();
   const items = parseBingSearchResults(htmlText)
+    .map((item) => ({ ...item, link: resolveBingResultUrl(item.link) }))
     .filter((item) => item.title && item.link && !/\/search\?/.test(item.link))
+    .filter((item) => isAllowedRegulationNewsUrl(item.link))
     .slice(0, 12);
 
   return items;
